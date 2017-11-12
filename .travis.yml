@@ -15,13 +15,19 @@ before_deploy:
 
 deploy:
     -
-      ## Build and release to maven central
       provider: script
       script: .travis/deploy.sh
       skip_cleanup: true
       on:
         repo: rzari/jarling
         branch: master
+    -
+      provider: script
+      script: .travis/deploy.sh
+      skip_cleanup: true
+      on:
+        repo: rzari/jarling
+        tags: true
     -
       ## Release to github
       provider: releases
