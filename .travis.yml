@@ -22,7 +22,6 @@ deploy:
       on:
         repo: rzari/jarling
         branch: master
-        tags: true
     -
       ## Release to github
       provider: releases
