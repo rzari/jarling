@@ -1,0 +1,32 @@
+language: java
+
+## export GPG details
+before_install:
+    - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+    - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+
+install:
+    mvn --settings .maven.settings.xml install -DskipTests=true -Dgpg.skip -Dmaven.javadoc.skip=true -B -V
+
+## Build and release to maven central
+script:
+    mvn clean deploy --settings .maven.settings.xml -DskipTests=true -B -U -Prelease
+
+## Get the project version
+before_deploy:
+    - mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
+    - export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
+
+## Release to github
+deploy:
+  provider: releases
+  api_key:
+    secure: yUITyls43XMGUAJ/igALkhBUgKEt6gvI8g+8SMHnVDDl6eZVKmkpLxJZkJjuqNFR0P8sNjbu3PpOdhPCg+UfIyZPsKUaNnJC0KZFFiNj+y8OXuRHEFlMebmxh5NR56Em54uAV7NVb6camoia4l7nyLj0khxyITM2xJsx5Ea/Ul+zbgJSmKWxEbKIX+v6TtBBnhf2SAXqarLZGOyJysKg+iuKdo+3QoA5NcstndKWDL+i6dZES2J/rXE4GqAgBC9Bz9F471wl+EWOAn4+VI2mjXl8HKKe5c8sOY6krWmvNc8R8H5E7PudTD23q0g8qPm4yEJTXzex2LVpVtFC9E3A1QdeWY2AG+XBotRKAjg79aUfsxDVTyJhmBvLPPph7tsJuFxZ4BBWNy4mPJKWXQI9f8jXx4G3s/K3Jdo9OkFugH1waB8elHpqiMeLCtygxpGat9t6BgtJDixexhwH8RIKtgquZpiafC0qzNqlGVStFR8Xo4AWgFhRjbFcpZSGxU2CsLOq2XKReCyaQ+mVGf3h8IeVb4wof+84/aHFogXoOCg4bU4Abtcq3S0mj86hZa8T2hb4vOi51iNX4oWG+6T4353fdXc/t3lDLoZWbKdoVrC46dmnBKcIB14uw+JTdnhe1xWl3HBrZTtwpVvdtCNzKB43yuYPHzs4XYeqPQVSjkk=
+  file:
+    - jarling/target/jarling-$project_version.jar
+    - jarling/target/jarling-$project_version-javadoc.jar
+    - jarling/target/jarling-$project_version-sources.jar
+  skip_cleanup: true
+  on:
+    repo: rzari/jarling
+    tags: true

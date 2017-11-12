@@ -4,3 +4,4 @@ target
 test.properties
 temp/*
 cfg/*.properties
+.DS_Store
