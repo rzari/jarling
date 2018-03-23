@@ -1,7 +1,7 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.Transaction;
+import org.jarling.models.transactions.Transaction;
 
 import java.util.Date;
 import java.util.List;

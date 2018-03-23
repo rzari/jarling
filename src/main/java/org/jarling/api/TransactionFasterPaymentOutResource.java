@@ -1,7 +1,7 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.FasterPaymentsOutTransaction;
+import org.jarling.models.transactions.FasterPaymentsOutTransaction;
 
 import java.util.Date;
 import java.util.List;

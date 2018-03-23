@@ -1,8 +1,8 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.Account;
-import org.jarling.models.AccountBalance;
+import org.jarling.models.accounts.Account;
+import org.jarling.models.accounts.AccountBalance;
 
 /**
  *

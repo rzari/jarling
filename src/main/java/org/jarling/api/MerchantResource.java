@@ -1,8 +1,8 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.Merchant;
-import org.jarling.models.MerchantLocation;
+import org.jarling.models.merchants.Merchant;
+import org.jarling.models.merchants.MerchantLocation;
 
 /**
  *
