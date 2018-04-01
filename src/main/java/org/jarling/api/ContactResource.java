@@ -1,8 +1,8 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.Contact;
-import org.jarling.models.ContactAccount;
+import org.jarling.models.contacts.Contact;
+import org.jarling.models.contacts.ContactAccount;
 
 import java.util.List;
 

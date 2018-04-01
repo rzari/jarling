@@ -1,8 +1,8 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.Payment;
-import org.jarling.models.RecurrenceRule;
+import org.jarling.models.common.RecurrenceRule;
+import org.jarling.models.payments.Payment;
 
 import java.math.BigDecimal;
 import java.util.List;

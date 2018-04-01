@@ -1,7 +1,7 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.DirectDebitTransaction;
+import org.jarling.models.directDebits.DirectDebitTransaction;
 
 import java.util.Date;
 import java.util.List;
