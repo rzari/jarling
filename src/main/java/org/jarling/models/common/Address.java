@@ -1,4 +1,4 @@
-package org.jarling.models.addresses;
+package org.jarling.models.common;
 
 /**
  *

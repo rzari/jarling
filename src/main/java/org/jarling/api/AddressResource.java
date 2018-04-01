@@ -1,7 +1,7 @@
 package org.jarling.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.addresses.Addresses;
+import org.jarling.models.common.Addresses;
 
 /**
  *

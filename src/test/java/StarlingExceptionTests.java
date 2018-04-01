@@ -1,7 +1,7 @@
 import com.google.gson.Gson;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.models.AccountBalance;
+import org.jarling.models.accounts.AccountBalance;
 import org.jarling.services.ApiService;
 import org.junit.Before;
 import org.junit.Test;

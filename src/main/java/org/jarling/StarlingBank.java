@@ -13,6 +13,7 @@ public interface StarlingBank extends AccountResource,
         DirectDebitMandateResource,
         MerchantResource,
         PaymentResource,
+        SavingsGoalResource,
         TransactionDirectDebitResource,
         TransactionFasterPaymentInResource,
         TransactionFasterPaymentOutResource,
@@ -36,6 +37,8 @@ public interface StarlingBank extends AccountResource,
     MerchantResource merchant();
 
     PaymentResource payment();
+
+    SavingsGoalResource savingsGoal();
 
     TransactionResource transaction();
 

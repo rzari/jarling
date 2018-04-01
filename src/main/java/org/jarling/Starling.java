@@ -1,17 +1,38 @@
 package org.jarling;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.jarling.api.*;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.HttpParameter;
 import org.jarling.http.HttpResponse;
-import org.jarling.models.*;
-import org.jarling.services.*;
+import org.jarling.models.accounts.Account;
+import org.jarling.models.accounts.AccountBalance;
+import org.jarling.models.common.Addresses;
+import org.jarling.models.cards.Card;
+import org.jarling.models.common.*;
+import org.jarling.models.contacts.Contact;
+import org.jarling.models.contacts.ContactAccount;
+import org.jarling.models.contacts.ContactAccountType;
+import org.jarling.models.customers.Customer;
+import org.jarling.models.directDebits.DirectDebitMandate;
+import org.jarling.models.directDebits.DirectDebitTransaction;
+import org.jarling.models.merchants.Merchant;
+import org.jarling.models.merchants.MerchantLocation;
+import org.jarling.models.payments.Payment;
+import org.jarling.models.budgeting.SavingsGoal;
+import org.jarling.models.transactions.FasterPaymentsInTransaction;
+import org.jarling.models.transactions.FasterPaymentsOutTransaction;
+import org.jarling.models.transactions.MasterCardTransaction;
+import org.jarling.models.transactions.Transaction;
+import org.jarling.models.customers.WhoAmI;
+import org.jarling.services.ApiService;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -23,6 +44,7 @@ import java.util.List;
 public final class Starling extends StarlingBase implements StarlingBank{
 
     private static ApiService apiService;
+    private static Gson gson = new Gson();
 
     public Starling(StarlingBankEnvironment environment, String accessToken){
         if (accessToken == null || accessToken.equals("")){
@@ -279,6 +301,111 @@ public final class Starling extends StarlingBase implements StarlingBank{
         return gson.fromJson(apiService.get("/me").asString(), WhoAmI.class);
     }
 
+
+    @Override
+    public SavingsGoal getSavingsGoal(String savingsGoalUid) throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/savings-goals/" + savingsGoalUid).asString(), SavingsGoal.class);
+    }
+
+
+    @Override
+    public List<SavingsGoal> listSavingsGoals() throws StarlingBankRequestException {
+        return fromJsonList(SavingsGoal[].class, apiService.get("/savings-goals").asString(), "savingsGoalList");
+    }
+
+    @Override
+    public void deleteSavingsGoal(String savingsGoalUid) throws StarlingBankRequestException {
+        apiService.delete("/savings-goals/" + savingsGoalUid);
+    }
+
+    @Override
+    public Photo getSavingsGoalPhoto(String savingsGoalUid) throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/savings-goals/" + savingsGoalUid + "/photo").asString(), Photo.class);
+    }
+
+    @Override
+    public String createSavingsGoal(String name, String currency, BigDecimal targetAmount) throws StarlingBankRequestException {
+        return createSavingsGoal(name, currency, targetAmount, "");
+    }
+
+    @Override
+    public String createSavingsGoal(String name, String currency, BigDecimal targetAmount, String photo) throws StarlingBankRequestException {
+        JsonObject savingsGoalRequestJson = new JsonObject();
+        JsonObject targetJson = new JsonObject();
+
+        savingsGoalRequestJson.addProperty("name", name);
+        savingsGoalRequestJson.addProperty("currency", currency);
+        savingsGoalRequestJson.addProperty("photo", photo);
+        targetJson.addProperty("currency", currency);
+        targetJson.addProperty("minorUnits", targetAmount.multiply(BigDecimal.TEN.multiply(BigDecimal.TEN)).longValue());
+        savingsGoalRequestJson.add("target", targetJson);
+
+        HttpResponse savingsGoalResponse = apiService.put("/savings-goals/" + UUID.randomUUID().toString(), null, null, savingsGoalRequestJson.toString());
+
+        JsonObject response = savingsGoalResponse.asJsonObject();
+
+        if (response.get("success").getAsBoolean()){
+            return response.get("savingsGoalUid").getAsString();
+        }
+        return null;
+    }
+
+    @Override
+    public RecurringTransfer getSavingsGoalRecurringTransfer(String savingsGoalUid) throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/savings-goals/" + savingsGoalUid + "/recurring-transfer").asString(), RecurringTransfer.class);
+    }
+
+    @Override
+    public String createSavingsGoalRecurringTransfer(String savingsGoalUid, RecurrenceRule recurrenceRule, CurrencyAndAmount currencyAndAmount) throws StarlingBankRequestException {
+        RecurringTransfer recurringTransfer = new RecurringTransfer(recurrenceRule, currencyAndAmount);
+        String jsonString = gson.toJson(recurringTransfer);
+        HttpResponse response = apiService.put("/savings-goals/" + savingsGoalUid + "/recurring-transfer", null, null, jsonString);
+
+        if (200 == response.getStatusCode()){
+            JsonObject json = response.asJsonObject();
+            if (json.get("success").getAsBoolean()){
+                return json.get("transferUid").getAsString();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void deleteSavingsGoalRecurringTransfer(String savingsGoalUid) throws StarlingBankRequestException {
+        apiService.delete("/savings-goals/" + savingsGoalUid + "/recurring-transfer");
+    }
+
+    @Override
+    public String withdrawMoneyFromSavingsGoal(String savingsGoalUid, Amount amount) throws StarlingBankRequestException {
+        String jsonString = gson.toJson(amount);
+        HttpResponse response = apiService.put("/savings-goals/" + savingsGoalUid + "/withdraw-money/" + UUID.randomUUID().toString(), null, null, jsonString);
+
+        if (200 == response.getStatusCode()){
+            JsonObject json = response.asJsonObject();
+            if (json.get("success").getAsBoolean()){
+                return json.get("transferUid").getAsString();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String addMoneyToSavingsGoal(String savingsGoalUid, Amount amount) throws StarlingBankRequestException {
+        String jsonString = gson.toJson(amount);
+        HttpResponse response = apiService.put("/savings-goals/" + savingsGoalUid + "/add-money/" + UUID.randomUUID().toString(), null, null, jsonString);
+
+        if (200 == response.getStatusCode()){
+            JsonObject json = response.asJsonObject();
+            if (json.get("success").getAsBoolean()){
+                return json.get("transferUid").getAsString();
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public AccountResource account() {
         return this;
@@ -320,6 +447,11 @@ public final class Starling extends StarlingBase implements StarlingBank{
     }
 
     @Override
+    public SavingsGoalResource savingsGoal() {
+        return this;
+    }
+
+    @Override
     public TransactionResource transaction() {
         return this;
     }
@@ -348,4 +480,5 @@ public final class Starling extends StarlingBase implements StarlingBank{
     public WhoAmIResource whoAmI() {
         return this;
     }
+
 }

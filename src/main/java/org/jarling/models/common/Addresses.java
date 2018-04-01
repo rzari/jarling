@@ -1,4 +1,4 @@
-package org.jarling.models.addresses;
+package org.jarling.models.common;
 
 import com.google.gson.annotations.JsonAdapter;
 import org.jarling.models.gson.AddressesDeserializer;

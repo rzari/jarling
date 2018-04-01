@@ -24,7 +24,7 @@ Details of how to obtain a token can be found [here](https://developer.starlingb
 
 ### Initialise Client
 ```java
-StarlingBank starling = new StarlingBank(StarlingBankEnvironment.PRODUCTION, "<my_personal_access_token>");
+StarlingBank starling = new Starling(StarlingBankEnvironment.PRODUCTION, "<my_personal_access_token>");
 ```
 
 ### Fetch your account details
