@@ -8,13 +8,13 @@
 * [Gson](https://github.com/google/gson)
 
 ## Download
-Jarling 0.1.0 can be downloaded [here](https://oss.sonatype.org/service/local/repositories/releases/content/org/jarling/jarling/0.1.0/jarling-0.1.0.jar) or added as a dependency to Maven using the following:
+Jarling 0.2.0 can be downloaded [here](https://oss.sonatype.org/service/local/repositories/releases/content/org/jarling/jarling/0.2.0/jarling-0.2.0.jar) or added as a dependency to Maven using the following:
 
 ```xml
 <dependency>
   <groupId>org.jarling</groupId>
   <artifactId>jarling</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
