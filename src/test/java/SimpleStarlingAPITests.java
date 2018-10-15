@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 public class SimpleStarlingAPITests {
 
     private Starling starling = null;
-    private static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+    private static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     //Regex for matching dynamic data
     final String regexUUID          = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
