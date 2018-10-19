@@ -18,7 +18,7 @@ import java.util.List;
 abstract class StarlingBase {
 
     final Gson gson = new Gson();
-    static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+    static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private JsonObject toJsonObject(String json){
         return gson.fromJson(json, JsonObject.class);
