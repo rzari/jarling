@@ -2,6 +2,7 @@ package org.jarling;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.jarling.services.ApiService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,9 +16,20 @@ import java.util.List;
  * @author Nav Roudsari (nav@rzari.co.uk)
  *
  */
-abstract class StarlingBase {
+public abstract class StarlingBase {
 
-    final Gson gson = new Gson();
+    protected static ApiService apiService;
+
+    public StarlingBase(StarlingBankApiVersion apiVersion, StarlingBankEnvironment environment, String accessToken){
+        if (accessToken == null || accessToken.equals("")){
+            throw new IllegalArgumentException("access token cannot be null or blank");
+        }
+        else {
+            apiService = new ApiService(apiVersion, environment, accessToken);
+        }
+    }
+
+    protected final Gson gson = new Gson();
     static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private JsonObject toJsonObject(String json){

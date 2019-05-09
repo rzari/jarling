@@ -26,9 +26,7 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import static org.junit.Assert.*;
@@ -38,20 +36,9 @@ import static org.junit.Assert.*;
  * @author Nav Roudsari (nav@rzari.co.uk)
  *
  */
-public class SimpleStarlingAPITests {
+public class SimpleStarlingV1APITests {
 
     private Starling starling = null;
-    private static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    //Regex for matching dynamic data
-    final String regexUUID          = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-    final String regexSortCode      = "[0-9]{6}";
-    final String regexAccountNumber = "[0-9]{8}";
-    final String regexBIC           = "([a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?)";
-    final String regexIBAN          = "[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}";
-    final String regexPostCode      = "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\\s?[0-9][A-Za-z]{2})";
-    final String regexEmail         = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)])";
-
 
     @Before
     public void setUp() {
@@ -70,13 +57,13 @@ public class SimpleStarlingAPITests {
         try {
             Account account = starling.getAccount();
 
-            assertTrue(account.getName().matches(regexUUID + " GBP"));
-            assertTrue(account.getSortCode().matches(regexSortCode));
-            assertTrue(account.getNumber().matches(regexAccountNumber));
+            assertTrue(account.getName().matches(TestUtils.regexUUID + " GBP"));
+            assertTrue(account.getSortCode().matches(TestUtils.regexSortCode));
+            assertTrue(account.getNumber().matches(TestUtils.regexAccountNumber));
             assertEquals("GBP", account.getCurrency());
-            assertTrue(account.getBic().matches(regexBIC));
-            assertTrue(account.getIban().matches(regexIBAN));
-            assertTrue(account.getId().matches(regexUUID));
+            assertTrue(account.getBic().matches(TestUtils.regexBIC));
+            assertTrue(account.getIban().matches(TestUtils.regexIBAN));
+            assertTrue(account.getId().matches(TestUtils.regexUUID));
         }catch (StarlingBankRequestException se) {
             fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
         }
@@ -102,7 +89,7 @@ public class SimpleStarlingAPITests {
             Address previousAddress = addresses.getPrevious();
             assertNotEquals("", currentAddress.getCity());
             assertNotEquals("", currentAddress.getCountry());
-            assertTrue(currentAddress.getPostcode().matches(regexPostCode));
+            assertTrue(currentAddress.getPostcode().matches(TestUtils.regexPostCode));
             assertNotEquals("", currentAddress.getStreetAddress());
 
             assertEquals(null, previousAddress.getCity());
@@ -120,7 +107,7 @@ public class SimpleStarlingAPITests {
             Contact contact = starling.listContacts().get(0);
 
             assertNotEquals("", contact.getName());
-            assertTrue(contact.getId().matches(regexUUID));
+            assertTrue(contact.getId().matches(TestUtils.regexUUID));
         }catch (StarlingBankRequestException se) {
             fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
         }
@@ -130,7 +117,7 @@ public class SimpleStarlingAPITests {
     public void testWhoAmI() {
         try {
             WhoAmI whoAmI = starling.getWhoAmI();
-            assertTrue(whoAmI.getCustomerUid().matches(regexUUID));
+            assertTrue(whoAmI.getCustomerUid().matches(TestUtils.regexUUID));
         }catch (StarlingBankRequestException se) {
             fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
         }
@@ -144,7 +131,7 @@ public class SimpleStarlingAPITests {
             assertNotNull(card.getActivated());
             assertNotNull(card.getActivationRequested());
             assertNotNull(card.getDispatchDate());
-            assertTrue(card.getId().matches(regexUUID));
+            assertTrue(card.getId().matches(TestUtils.regexUUID));
             assertNotEquals("", card.getNameOnCard());
             assertEquals(CardType.NONE.getValue(), card.getType());
         }catch (StarlingBankRequestException se) {
@@ -158,11 +145,11 @@ public class SimpleStarlingAPITests {
             Contact contact = starling.listContacts().get(0);
             ContactAccount contactAccount = starling.listContactAccounts(contact.getId()).get(0);
 
-            assertTrue(contactAccount.getId().matches(regexUUID));
+            assertTrue(contactAccount.getId().matches(TestUtils.regexUUID));
             assertNotNull(contactAccount.getType());
             assertNotEquals("", contactAccount.getName());
-            assertTrue(contactAccount.getSortCode().matches(regexSortCode));
-            assertTrue(contactAccount.getAccountNumber().matches(regexAccountNumber));
+            assertTrue(contactAccount.getSortCode().matches(TestUtils.regexSortCode));
+            assertTrue(contactAccount.getAccountNumber().matches(TestUtils.regexAccountNumber));
         }catch (StarlingBankRequestException se) {
             fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
         }
@@ -173,9 +160,9 @@ public class SimpleStarlingAPITests {
         try {
             Customer customer = starling.getCustomer();
 
-            assertTrue(customer.getCustomerUid().matches(regexUUID));
+            assertTrue(customer.getCustomerUid().matches(TestUtils.regexUUID));
             assertNotNull(customer.getDateOfBirth());
-            assertTrue(customer.getEmail().matches(regexEmail));
+            assertTrue(customer.getEmail().matches(TestUtils.regexEmail));
             assertNotEquals("", customer.getFirstName());
             assertNotEquals("", customer.getLastName());
             assertNotEquals("", customer.getPhone());
@@ -192,9 +179,9 @@ public class SimpleStarlingAPITests {
             assertNotEquals("", directDebitMandate.getOriginatorName());
             assertEquals(null, directDebitMandate.getCancelled());
             assertNotNull(directDebitMandate.getCreated());
-            assertTrue(directDebitMandate.getOriginatorUid().matches(regexUUID));
+            assertTrue(directDebitMandate.getOriginatorUid().matches(TestUtils.regexUUID));
             assertNotEquals("", directDebitMandate.getReference());
-            assertTrue(directDebitMandate.getUid().matches(regexUUID));
+            assertTrue(directDebitMandate.getUid().matches(TestUtils.regexUUID));
             assertNotNull(directDebitMandate.getSource());
             assertNotNull(directDebitMandate.getStatus());
         }catch (StarlingBankRequestException se) {
@@ -209,10 +196,10 @@ public class SimpleStarlingAPITests {
 
             assertNotNull(directDebitTransaction.getCreated());
             assertNotNull(directDebitTransaction.getSource());
-            assertTrue(directDebitTransaction.getId().matches(regexUUID));
+            assertTrue(directDebitTransaction.getId().matches(TestUtils.regexUUID));
             assertNotEquals("", directDebitTransaction.getCurrency());
             assertNotNull(directDebitTransaction.getDirection());
-            assertTrue(directDebitTransaction.getMandateId().matches(regexUUID));
+            assertTrue(directDebitTransaction.getMandateId().matches(TestUtils.regexUUID));
             assertNotEquals("", directDebitTransaction.getNarrative());
             assertNotEquals("", directDebitTransaction.getTitle());
             assertTrue(directDebitTransaction.getAmount().compareTo(BigDecimal.ZERO) == -1);
@@ -231,7 +218,7 @@ public class SimpleStarlingAPITests {
 
             assertNotNull(fasterPaymentsInTransaction.getCreated().toString());
             assertNotNull(fasterPaymentsInTransaction.getSource());
-            assertTrue(fasterPaymentsInTransaction.getId().matches(regexUUID));
+            assertTrue(fasterPaymentsInTransaction.getId().matches(TestUtils.regexUUID));
             assertNotEquals("", fasterPaymentsInTransaction.getCurrency());
             assertNotNull(fasterPaymentsInTransaction.getDirection());
             assertNotEquals("", fasterPaymentsInTransaction.getNarrative());
@@ -255,13 +242,13 @@ public class SimpleStarlingAPITests {
 
             assertNotNull(fasterPaymentsOutTransaction.getCreated());
             assertNotNull(fasterPaymentsOutTransaction.getSource());
-            assertTrue(fasterPaymentsOutTransaction.getId().matches(regexUUID));
+            assertTrue(fasterPaymentsOutTransaction.getId().matches(TestUtils.regexUUID));
             assertNotEquals("", fasterPaymentsOutTransaction.getCurrency());
             assertNotNull(fasterPaymentsOutTransaction.getDirection());
             assertNotEquals("", fasterPaymentsOutTransaction.getNarrative());
             assertTrue(fasterPaymentsOutTransaction.getAmount().compareTo(BigDecimal.ZERO) == -1);
-            assertTrue(fasterPaymentsOutTransaction.getReceivingContactAccountId().matches(regexUUID));
-            assertTrue(fasterPaymentsOutTransaction.getReceivingContactId().matches(regexUUID));
+            assertTrue(fasterPaymentsOutTransaction.getReceivingContactAccountId().matches(TestUtils.regexUUID));
+            assertTrue(fasterPaymentsOutTransaction.getReceivingContactId().matches(TestUtils.regexUUID));
         }catch (StarlingBankRequestException se) {
             fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
         }
@@ -277,14 +264,14 @@ public class SimpleStarlingAPITests {
             assertNotNull(masterCardTransaction.getSource());
             assertTrue(masterCardTransaction.getSourceAmount().compareTo(BigDecimal.ZERO) == 1);
             assertNotEquals("", masterCardTransaction.getSourceCurrency());
-            assertTrue(masterCardTransaction.getId().matches(regexUUID));
+            assertTrue(masterCardTransaction.getId().matches(TestUtils.regexUUID));
             assertNotEquals("", masterCardTransaction.getCurrency());
             assertNotNull(masterCardTransaction.getDirection());
             assertNotEquals("", masterCardTransaction.getNarrative());
             assertTrue(masterCardTransaction.getAmount().compareTo(BigDecimal.ZERO) == -1);
             assertNotNull(masterCardTransaction.getMastercardTransactionMethod());
-            assertTrue(masterCardTransaction.getMerchantId().matches(regexUUID));
-            assertTrue(masterCardTransaction.getMerchantLocationId().matches(regexUUID));
+            assertTrue(masterCardTransaction.getMerchantId().matches(TestUtils.regexUUID));
+            assertTrue(masterCardTransaction.getMerchantLocationId().matches(TestUtils.regexUUID));
             assertNotNull(masterCardTransaction.getStatus());
         }catch (StarlingBankRequestException se) {
             fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
@@ -336,8 +323,8 @@ public class SimpleStarlingAPITests {
             assertNotNull(payment.getEndDate());
             assertNull(payment.getCancelledAt());
             assertNull(payment.getRecurrenceRule());
-            assertTrue(payment.getPaymentOrderId().matches(regexUUID));
-            assertTrue(payment.getReceivingContactAccountId().matches(regexUUID));
+            assertTrue(payment.getPaymentOrderId().matches(TestUtils.regexUUID));
+            assertTrue(payment.getReceivingContactAccountId().matches(TestUtils.regexUUID));
             assertNull(payment.getMandateId());
             assertNotNull(payment.getPaymentType());
             assertNotEquals("", payment.getRecipientName());
@@ -380,11 +367,11 @@ public class SimpleStarlingAPITests {
                     .findFirst()
                     .orElse(null);
             RecurrenceRule recurrenceRule = new RecurrenceRule(
-                    transactionDateFormat.parse("2018-04-02"),
+                    TestUtils.transactionDateFormat.parse("2018-04-02"),
                     Frequency.MONTHLY,
                     1,
                     1,
-                    transactionDateFormat.parse("2020-02-02"),
+                    TestUtils.transactionDateFormat.parse("2020-02-02"),
                     DayOfWeek.MONDAY,
                     null,
                     3,
@@ -417,10 +404,10 @@ public class SimpleStarlingAPITests {
             assertTrue(transaction.getBalance().compareTo(BigDecimal.ZERO) == 1);
             assertNotNull(transaction.getCreated());
             assertNotNull(transaction.getDirection());
-            assertTrue(transaction.getId().matches(regexUUID));
+            assertTrue(transaction.getId().matches(TestUtils.regexUUID));
             assertNotNull(transaction.getSource());
 
-            for (Transaction t : starling.listTransactions(transactionDateFormat.parse("2017-09-01"), transactionDateFormat.parse("2017-09-01"))){
+            for (Transaction t : starling.listTransactions(TestUtils.transactionDateFormat.parse("2017-09-01"), TestUtils.transactionDateFormat.parse("2017-09-01"))){
                 assertTrue(t.getAmount().compareTo(BigDecimal.ZERO) == 1);
                 assertNotNull(t.getCreated());
             }

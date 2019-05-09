@@ -1,33 +1,44 @@
 package org.jarling;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.jarling.api.*;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.HttpParameter;
 import org.jarling.http.HttpResponse;
+import org.jarling.api.AccountResource;
+import org.jarling.api.AddressResource;
+import org.jarling.api.CardResource;
+import org.jarling.api.ContactResource;
+import org.jarling.api.CustomerResource;
+import org.jarling.api.DirectDebitMandateResource;
+import org.jarling.api.MerchantResource;
+import org.jarling.api.PaymentResource;
+import org.jarling.api.SavingsGoalResource;
+import org.jarling.api.TransactionDirectDebitResource;
+import org.jarling.api.TransactionFasterPaymentInResource;
+import org.jarling.api.TransactionFasterPaymentOutResource;
+import org.jarling.api.TransactionMasterCardResource;
+import org.jarling.api.TransactionResource;
+import org.jarling.api.WhoAmIResource;
 import org.jarling.models.accounts.Account;
 import org.jarling.models.accounts.AccountBalance;
-import org.jarling.models.common.Addresses;
+import org.jarling.models.budgeting.SavingsGoal;
 import org.jarling.models.cards.Card;
 import org.jarling.models.common.*;
 import org.jarling.models.contacts.Contact;
 import org.jarling.models.contacts.ContactAccount;
 import org.jarling.models.contacts.ContactAccountType;
 import org.jarling.models.customers.Customer;
+import org.jarling.models.customers.WhoAmI;
 import org.jarling.models.directDebits.DirectDebitMandate;
 import org.jarling.models.directDebits.DirectDebitTransaction;
 import org.jarling.models.merchants.Merchant;
 import org.jarling.models.merchants.MerchantLocation;
 import org.jarling.models.payments.Payment;
-import org.jarling.models.budgeting.SavingsGoal;
 import org.jarling.models.transactions.FasterPaymentsInTransaction;
 import org.jarling.models.transactions.FasterPaymentsOutTransaction;
 import org.jarling.models.transactions.MasterCardTransaction;
 import org.jarling.models.transactions.Transaction;
-import org.jarling.models.customers.WhoAmI;
-import org.jarling.services.ApiService;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -41,18 +52,14 @@ import java.util.UUID;
  * @author Nav Roudsari (nav@rzari.co.uk)
  *
  */
-public final class Starling extends StarlingBase implements StarlingBank{
+public final class Starling extends StarlingBase implements StarlingBank {
 
-    private static ApiService apiService;
-    private static Gson gson = new Gson();
-
+    /**
+     * @deprecated V1 APIs will be retired in Q4 2019. Use {@link org.jarling.v2.Starling(StarlingBankEnvironment, String)} ()}
+     */
+    @Deprecated
     public Starling(StarlingBankEnvironment environment, String accessToken){
-        if (accessToken == null || accessToken.equals("")){
-            throw new IllegalArgumentException("access token cannot be null or blank");
-        }
-        else {
-            apiService = new ApiService(environment, accessToken);
-        }
+        super(StarlingBankApiVersion.V1, environment, accessToken);
     }
 
     @Override

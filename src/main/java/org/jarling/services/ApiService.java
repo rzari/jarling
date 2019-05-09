@@ -1,5 +1,6 @@
 package org.jarling.services;
 
+import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.BasicHttpsClient;
@@ -21,11 +22,12 @@ public final class ApiService implements HttpClient{
 
     private final Map<String, String> defaultRequestHeaders = new HashMap<>();
     private final BasicHttpsClient request;
-    private final String STARLING_BANK_API_VERSION = "/api/v1";
+    private final String STARLING_BANK_API_VERSION;
     private final String STARLING_BANK_ENDPOINT;
     private final String ACCESS_TOKEN;
 
-    public ApiService(StarlingBankEnvironment starlingBankEnvironment, String accessToken){
+    public ApiService(StarlingBankApiVersion starlingApiVersion, StarlingBankEnvironment starlingBankEnvironment, String accessToken) {
+        this.STARLING_BANK_API_VERSION = starlingApiVersion.getPath();
         this.STARLING_BANK_ENDPOINT = starlingBankEnvironment.getPath() + STARLING_BANK_API_VERSION;
         this.ACCESS_TOKEN = accessToken;
         setDefaultRequestHeaders();
