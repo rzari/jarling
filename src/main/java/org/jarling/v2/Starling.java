@@ -4,9 +4,12 @@ import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.StarlingBase;
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.api.AccountHolderResource;
 import org.jarling.v2.api.ApiUserIdentityResource;
-import org.jarling.v2.models.Identity;
-import org.jarling.v2.models.Individual;
+import org.jarling.v2.models.accountholder.AccountHolder;
+import org.jarling.v2.models.accountholder.AccountHolderName;
+import org.jarling.v2.models.apiuseridentity.Identity;
+import org.jarling.v2.models.apiuseridentity.Individual;
 
 /**
  * API class responsible for creating services to access Starling Bank resources
@@ -18,6 +21,26 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
+    public AccountHolderResource accountHolder() {
+        return this;
+    }
+
+    @Override
+    public AccountHolder getAccountHolder() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder").asString(), AccountHolder.class);
+    }
+
+    @Override
+    public AccountHolderName getAccountHolderName() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder/name").asString(), AccountHolderName.class);
+    }
+
+    @Override
+    public ApiUserIdentityResource identity() {
+        return this;
+    }
+
+    @Override
     public Individual getAuthorisingIndividual() throws StarlingBankRequestException {
         return gson.fromJson(apiService.get("/identity/individual").asString(), Individual.class);
     }
@@ -25,10 +48,5 @@ public final class Starling extends StarlingBase implements StarlingBank {
     @Override
     public Identity getTokenIdentity() throws StarlingBankRequestException {
         return gson.fromJson(apiService.get("/identity/token").asString(), Identity.class);
-    }
-
-    @Override
-    public ApiUserIdentityResource identity() {
-        return this;
     }
 }

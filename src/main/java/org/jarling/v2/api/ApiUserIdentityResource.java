@@ -1,8 +1,8 @@
 package org.jarling.v2.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.Identity;
-import org.jarling.v2.models.Individual;
+import org.jarling.v2.models.apiuseridentity.Identity;
+import org.jarling.v2.models.apiuseridentity.Individual;
 
 public interface ApiUserIdentityResource {
 
@@ -10,6 +10,7 @@ public interface ApiUserIdentityResource {
      * The individual who authorised the application
      *
      * @return Individual
+     * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     Individual getAuthorisingIndividual() throws StarlingBankRequestException;
 

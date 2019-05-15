@@ -1,3 +1,5 @@
+package org.jarling;
+
 import org.jarling.http.HttpParameter;
 import org.junit.Test;
 

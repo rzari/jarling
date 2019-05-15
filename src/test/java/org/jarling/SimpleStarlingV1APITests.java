@@ -1,5 +1,5 @@
-import org.jarling.Starling;
-import org.jarling.StarlingBankEnvironment;
+package org.jarling;
+
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.models.accounts.Account;
 import org.jarling.models.accounts.AccountBalance;

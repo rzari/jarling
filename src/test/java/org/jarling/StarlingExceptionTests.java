@@ -1,3 +1,5 @@
+package org.jarling;
+
 import com.google.gson.Gson;
 import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
