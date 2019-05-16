@@ -2,7 +2,7 @@ package org.jarling.v2.models.apiuseridentity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Information about an individual account holder
@@ -11,7 +11,7 @@ import java.util.Date;
 public class Individual {
     private final String firstName;
     private final String lastName;
-    private final Date dateOfBirth;
+    private final LocalDate dateOfBirth;
     private final String email;
     private final String phone;
 }
