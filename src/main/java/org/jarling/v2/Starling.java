@@ -7,12 +7,15 @@ import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.api.AccountHolderResource;
 import org.jarling.v2.api.AddressesResource;
 import org.jarling.v2.api.ApiUserIdentityResource;
+import org.jarling.v2.api.BusinessesResource;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
+import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
 import org.jarling.v2.models.apiuseridentity.Identity;
 import org.jarling.v2.models.apiuseridentity.Individual;
+import org.jarling.v2.models.businesses.Business;
 
 /**
  * API class responsible for creating services to access Starling Bank resources
@@ -66,5 +69,25 @@ public final class Starling extends StarlingBase implements StarlingBank {
     @Override
     public Identity getTokenIdentity() throws StarlingBankRequestException {
         return gson.fromJson(apiService.get("/identity/token").asString(), Identity.class);
+    }
+
+    @Override
+    public BusinessesResource businesses() {
+        return this;
+    }
+
+    @Override
+    public Business getBusiness() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder/business").asString(), Business.class);
+    }
+
+    @Override
+    public Address getRegisteredAddress() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder/business/registered-address").asString(), Address.class);
+    }
+
+    @Override
+    public Address getCorrespondenceAddress() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder/business/correspondence-address").asString(), Address.class);
     }
 }
