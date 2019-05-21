@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class BusinessTest extends BaseTest {
+public class BusinessesTest extends BaseTest {
     @Test
     public void testBusiness() {
         try {

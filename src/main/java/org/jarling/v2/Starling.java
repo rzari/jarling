@@ -14,6 +14,7 @@ import org.jarling.v2.models.apiuseridentity.Identity;
 import org.jarling.v2.models.individuals.EmailUpdateRequest;
 import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.businesses.Business;
+import org.jarling.v2.models.jointaccounts.JointAccount;
 
 /**
  * API class responsible for creating services to access Starling Bank resources
@@ -102,5 +103,15 @@ public final class Starling extends StarlingBase implements StarlingBank {
     @Override
     public void updateEmail(EmailUpdateRequest emailUpdateRequest) throws StarlingBankRequestException {
         apiService.put("/account-holder/individual/email", null, null, gson.toJson(emailUpdateRequest));
+    }
+
+    @Override
+    public JointAccountsResource jointAccounts() {
+        return this;
+    }
+
+    @Override
+    public JointAccount getJointAccount() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder/joint").asString(), JointAccount.class);
     }
 }

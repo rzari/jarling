@@ -1,8 +1,6 @@
 package org.jarling.v2.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.addresses.Address;
-import org.jarling.v2.models.businesses.Business;
 import org.jarling.v2.models.individuals.EmailUpdateRequest;
 import org.jarling.v2.models.individuals.Individual;
 
