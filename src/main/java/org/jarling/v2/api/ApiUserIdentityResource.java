@@ -2,7 +2,7 @@ package org.jarling.v2.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.apiuseridentity.Identity;
-import org.jarling.v2.models.apiuseridentity.Individual;
+import org.jarling.v2.models.individuals.Individual;
 
 public interface ApiUserIdentityResource {
 

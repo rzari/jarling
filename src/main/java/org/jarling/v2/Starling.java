@@ -4,17 +4,15 @@ import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.StarlingBase;
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.api.AccountHolderResource;
-import org.jarling.v2.api.AddressesResource;
-import org.jarling.v2.api.ApiUserIdentityResource;
-import org.jarling.v2.api.BusinessesResource;
+import org.jarling.v2.api.*;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
 import org.jarling.v2.models.apiuseridentity.Identity;
-import org.jarling.v2.models.apiuseridentity.Individual;
+import org.jarling.v2.models.individuals.EmailUpdateRequest;
+import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.businesses.Business;
 
 /**
@@ -89,5 +87,20 @@ public final class Starling extends StarlingBase implements StarlingBank {
     @Override
     public Address getCorrespondenceAddress() throws StarlingBankRequestException {
         return gson.fromJson(apiService.get("/account-holder/business/correspondence-address").asString(), Address.class);
+    }
+
+    @Override
+    public IndividualsResource individuals() {
+        return this;
+    }
+
+    @Override
+    public Individual getIndividual() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/account-holder/individual").asString(), Individual.class);
+    }
+
+    @Override
+    public void updateEmail(EmailUpdateRequest emailUpdateRequest) throws StarlingBankRequestException {
+        apiService.put("/account-holder/individual/email", null, null, gson.toJson(emailUpdateRequest));
     }
 }

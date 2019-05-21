@@ -1,4 +1,4 @@
-package org.jarling.v2.models.apiuseridentity;
+package org.jarling.v2.models.individuals;
 
 import lombok.Data;
 

@@ -3,8 +3,6 @@ package org.jarling.v2;
 import org.jarling.TestUtils;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.addresses.Address;
-import org.jarling.v2.models.apiuseridentity.Identity;
-import org.jarling.v2.models.apiuseridentity.Individual;
 import org.jarling.v2.models.businesses.Business;
 import org.junit.Test;
 
