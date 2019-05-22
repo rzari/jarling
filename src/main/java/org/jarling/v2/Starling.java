@@ -15,6 +15,7 @@ import org.jarling.v2.models.individuals.EmailUpdateRequest;
 import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.businesses.Business;
 import org.jarling.v2.models.jointaccounts.JointAccount;
+import org.jarling.v2.models.kyc.KycResult;
 
 /**
  * API class responsible for creating services to access Starling Bank resources
@@ -113,5 +114,15 @@ public final class Starling extends StarlingBase implements StarlingBank {
     @Override
     public JointAccount getJointAccount() throws StarlingBankRequestException {
         return gson.fromJson(apiService.get("/account-holder/joint").asString(), JointAccount.class);
+    }
+
+    @Override
+    public KycResource kyc() {
+        return this;
+    }
+
+    @Override
+    public KycResult getKycResult() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/kyc/result").asString(), KycResult.class);
     }
 }
