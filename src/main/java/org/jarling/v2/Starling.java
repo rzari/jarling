@@ -4,9 +4,14 @@ import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.StarlingBase;
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.http.HttpParameter;
 import org.jarling.v2.api.*;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
+import org.jarling.v2.models.accounts.AccountIdentifiers;
+import org.jarling.v2.models.accounts.Accounts;
+import org.jarling.v2.models.accounts.Balance;
+import org.jarling.v2.models.accounts.ConfirmationOfFunds;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
@@ -16,6 +21,8 @@ import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.businesses.Business;
 import org.jarling.v2.models.jointaccounts.JointAccount;
 import org.jarling.v2.models.kyc.KycResult;
+
+import java.util.UUID;
 
 /**
  * API class responsible for creating services to access Starling Bank resources
@@ -124,5 +131,31 @@ public final class Starling extends StarlingBase implements StarlingBank {
     @Override
     public KycResult getKycResult() throws StarlingBankRequestException {
         return gson.fromJson(apiService.get("/kyc/result").asString(), KycResult.class);
+    }
+
+    @Override
+    public AccountsResource accounts() {
+        return this;
+    }
+
+    @Override
+    public Accounts getAccounts() throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/accounts").asString(), Accounts.class);
+    }
+
+    @Override
+    public AccountIdentifiers getAccountIdentifiers(UUID accountUid) throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/accounts/" + accountUid.toString() + "/identifiers").asString(), AccountIdentifiers.class);
+    }
+
+    @Override
+    public Balance getAccountBalance(UUID accountUid) throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/accounts/" + accountUid.toString() + "/balance").asString(), Balance.class);
+    }
+
+    @Override
+    public ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, long targetAmountInMinorUnits) throws StarlingBankRequestException {
+        HttpParameter[] parameters = new HttpParameter[]{new HttpParameter("targetAmountInMinorUnits", targetAmountInMinorUnits)};
+        return gson.fromJson(apiService.get("/accounts/" + accountUid.toString() + "/confirmation-of-funds", parameters).asString(), ConfirmationOfFunds.class);
     }
 }

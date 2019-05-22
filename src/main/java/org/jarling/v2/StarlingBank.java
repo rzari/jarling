@@ -2,8 +2,9 @@ package org.jarling.v2;
 
 import org.jarling.v2.api.*;
 
-public interface StarlingBank extends AccountHolderResource, AddressesResource, ApiUserIdentityResource, BusinessesResource, IndividualsResource, JointAccountsResource, KycResource {
+public interface StarlingBank extends AccountHolderResource, AccountsResource, AddressesResource, ApiUserIdentityResource, BusinessesResource, IndividualsResource, JointAccountsResource, KycResource {
     AccountHolderResource accountHolder();
+    AccountsResource accounts();
     AddressesResource addresses();
     ApiUserIdentityResource identity();
     BusinessesResource businesses();
