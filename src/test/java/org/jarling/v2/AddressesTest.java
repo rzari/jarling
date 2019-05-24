@@ -2,14 +2,11 @@ package org.jarling.v2;
 
 import org.jarling.TestUtils;
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.accountholder.AccountHolder;
-import org.jarling.v2.models.accountholder.AccountHolderName;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 

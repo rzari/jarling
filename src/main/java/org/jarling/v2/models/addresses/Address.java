@@ -1,5 +1,6 @@
 package org.jarling.v2.models.addresses;
 
+import com.neovisionaries.i18n.CountryCode;
 import lombok.Data;
 
 /**
@@ -12,5 +13,5 @@ public class Address {
     private String line3;
     private String postTown;
     private String postCode;
-    private String countryCode; // QQ enum?
+    private CountryCode countryCode;
 }
