@@ -5,6 +5,8 @@ import org.jarling.StarlingBankEnvironment;
 import org.jarling.StarlingBase;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.HttpParameter;
+import org.jarling.http.HttpResponse;
+import org.jarling.models.transactions.FeedItemAttachmentData;
 import org.jarling.v2.api.*;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
@@ -158,5 +160,86 @@ public final class Starling extends StarlingBase implements StarlingBank {
     public ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, long targetAmountInMinorUnits) throws StarlingBankRequestException {
         HttpParameter[] parameters = new HttpParameter[]{new HttpParameter("targetAmountInMinorUnits", targetAmountInMinorUnits)};
         return gson.fromJson(apiService.get("/accounts/" + accountUid.toString() + "/confirmation-of-funds", parameters).asString(), ConfirmationOfFunds.class);
+    }
+
+    @Override
+    public TransactionFeedResource transactionFeed() {
+        return this;
+    }
+
+    @Override
+    public void updateSpendingCategory(UUID accountUid, UUID categoryUid, UUID feedItemUid, SpendingCategory spendingCategory) throws StarlingBankRequestException {
+        apiService.put(
+            "/feed/account/" + accountUid.toString()
+                + "/category/" + categoryUid.toString()
+                + "/" + feedItemUid.toString()
+                + "/spending-category",
+            null,
+            null,
+            simpleJsonWrapper("spendingCategory", spendingCategory)
+        );
+    }
+
+    @Override
+    public FeedItem getFeedItem(UUID accountUid, UUID categoryUid, UUID feedItemUid) throws StarlingBankRequestException {
+        return gson.fromJson(
+            apiService.get(
+                "/feed/account/" + accountUid.toString()
+                    + "/category/" + categoryUid.toString()
+                    + "/" + feedItemUid.toString()
+            ).asString(),
+            FeedItem.class
+        );
+    }
+
+    @Override
+    public List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Date changesSince) throws StarlingBankRequestException {
+        return fromJsonList(
+            FeedItem[].class,
+            apiService.get(
+                "/feed/account/" + accountUid.toString()
+                    + "/category/" + categoryUid.toString()
+            ).asString(),
+            "feedItems"
+        );
+    }
+
+    @Override
+    public List<FeedItemAttachment> getFeedItemAttachments(UUID accountUid, UUID categoryUid, UUID feedItemUid) throws StarlingBankRequestException {
+        return fromJsonList(
+            FeedItemAttachment[].class,
+            apiService.get(
+                "/feed/account/" + accountUid.toString()
+                    + "/category/" + categoryUid.toString()
+                    + "/" + feedItemUid.toString()
+                    + "/attachments"
+            ).asString(),
+            "feedItemAttachments"
+        );
+    }
+
+    @Override
+    public FeedItemAttachmentData getFeedItemAttachment(UUID accountUid, UUID categoryUid, UUID feedItemUid, UUID feedItemAttachmentUid) throws StarlingBankRequestException {
+        HttpResponse response = apiService.get(
+            "/feed/account/" + accountUid.toString()
+                + "/category/" + categoryUid.toString()
+                + "/" + feedItemUid.toString()
+                + "/attachments/" + feedItemAttachmentUid.toString()
+        );
+
+        return new FeedItemAttachmentData(response.getContentType(), response.asBytes());
+    }
+
+    @Override
+    public void updateUserNote(UUID accountUid, UUID categoryUid, UUID feedItemUid, String userNote) throws StarlingBankRequestException {
+        apiService.put(
+            "/feed/account/" + accountUid.toString()
+                + "/category/" + categoryUid.toString()
+                + "/" + feedItemUid.toString()
+                + "/user-note",
+            null,
+            null,
+            simpleJsonWrapper("userNote", userNote)
+        );
     }
 }

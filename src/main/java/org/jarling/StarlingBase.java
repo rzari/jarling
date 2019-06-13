@@ -60,7 +60,7 @@ public abstract class StarlingBase {
     }
 
     // https://stackoverflow.com/questions/14139437/java-type-generic-as-argument-for-gson
-    final <T> List<T> fromJsonList(final Class<T[]> clazz, String json, String memberName) {
+    protected final <T> List<T> fromJsonList(final Class<T[]> clazz, String json, String memberName) {
         return Arrays.asList(gson.fromJson(getJsonArray(json, memberName), clazz));
     }
 

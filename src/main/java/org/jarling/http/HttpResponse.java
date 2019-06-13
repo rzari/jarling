@@ -133,6 +133,17 @@ public class HttpResponse {
         return toString(this.is);
     }
 
+    public byte[] asBytes() {
+        try {
+            byte[] targetArray = new byte[this.is.available()];
+            this.is.read(targetArray);
+            return targetArray;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
     public void disconnect() {
         this.httpsURLConnection.disconnect();
     }
