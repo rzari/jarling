@@ -13,8 +13,7 @@ public class AccountsTest extends BaseTest {
     @Test
     public void testAccounts() {
         try {
-            Accounts accounts = starling.getAccounts();
-            Account account = accounts.getAccounts().get(0);
+            Account account = starling.getAccounts().get(0);
             assertTrue(account.getAccountUid().toString().matches(TestUtils.regexUUID));
             assertTrue(account.getDefaultCategory().toString().matches(TestUtils.regexUUID));
             assertFalse(account.getCurrency().isEmpty());
@@ -27,8 +26,7 @@ public class AccountsTest extends BaseTest {
     @Test
     public void testAccountIdentifiers() {
         try {
-            Accounts accounts = starling.getAccounts();
-            UUID accountUid = accounts.getAccounts().get(0).getAccountUid();
+            UUID accountUid = starling.getAccounts().get(0).getAccountUid();
             AccountIdentifiers accountIdentifiers = starling.getAccountIdentifiers(accountUid);
             assertTrue(accountIdentifiers.getAccountIdentifier().matches(TestUtils.regexAccountNumber));
             assertTrue(accountIdentifiers.getBankIdentifier().matches(TestUtils.regexSortCode));
@@ -42,8 +40,7 @@ public class AccountsTest extends BaseTest {
     @Test
     public void testAccountBalance() {
         try {
-            Accounts accounts = starling.getAccounts();
-            UUID accountUid = accounts.getAccounts().get(0).getAccountUid();
+            UUID accountUid = starling.getAccounts().get(0).getAccountUid();
             Balance balance = starling.getAccountBalance(accountUid);
             assertFalse(balance.getAmount().getCurrency().isEmpty());
             assertTrue(balance.getAmount().getMinorUnits() >= 0);
@@ -55,8 +52,7 @@ public class AccountsTest extends BaseTest {
     @Test
     public void testConfirmationOfFunds() {
         try {
-            Accounts accounts = starling.getAccounts();
-            UUID accountUid = accounts.getAccounts().get(0).getAccountUid();
+            UUID accountUid = starling.getAccounts().get(0).getAccountUid();
             Balance balance = starling.getAccountBalance(accountUid);
 
             ConfirmationOfFunds funds = starling.getConfirmationOfFunds(accountUid, balance.getAvailableToSpend().getMinorUnits());

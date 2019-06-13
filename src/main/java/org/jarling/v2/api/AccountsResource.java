@@ -1,11 +1,9 @@
 package org.jarling.v2.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.accounts.AccountIdentifiers;
-import org.jarling.v2.models.accounts.Accounts;
-import org.jarling.v2.models.accounts.Balance;
-import org.jarling.v2.models.accounts.ConfirmationOfFunds;
+import org.jarling.v2.models.accounts.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface AccountsResource {
@@ -16,7 +14,7 @@ public interface AccountsResource {
      * @return Accounts
      * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
-    Accounts getAccounts() throws StarlingBankRequestException;
+    List<Account> getAccounts() throws StarlingBankRequestException;
 
     /**
      * Get a customer's bank account identifiers

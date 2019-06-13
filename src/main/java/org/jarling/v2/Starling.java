@@ -8,20 +8,21 @@ import org.jarling.http.HttpParameter;
 import org.jarling.v2.api.*;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
-import org.jarling.v2.models.accounts.AccountIdentifiers;
-import org.jarling.v2.models.accounts.Accounts;
-import org.jarling.v2.models.accounts.Balance;
-import org.jarling.v2.models.accounts.ConfirmationOfFunds;
+import org.jarling.v2.models.accounts.*;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
 import org.jarling.v2.models.apiuseridentity.Identity;
-import org.jarling.v2.models.individuals.EmailUpdateRequest;
-import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.businesses.Business;
+import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.jointaccounts.JointAccount;
 import org.jarling.v2.models.kyc.KycResult;
+import org.jarling.v2.models.transactionfeed.FeedItem;
+import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
+import org.jarling.v2.models.transactionfeed.SpendingCategory;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -109,8 +110,8 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
-    public void updateEmail(EmailUpdateRequest emailUpdateRequest) throws StarlingBankRequestException {
-        apiService.put("/account-holder/individual/email", null, null, gson.toJson(emailUpdateRequest));
+    public void updateEmail(String email) throws StarlingBankRequestException {
+        apiService.put("/account-holder/individual/email", null, null, simpleJsonWrapper("email", email));
     }
 
     @Override
@@ -139,8 +140,8 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
-    public Accounts getAccounts() throws StarlingBankRequestException {
-        return gson.fromJson(apiService.get("/accounts").asString(), Accounts.class);
+    public List<Account> getAccounts() throws StarlingBankRequestException {
+        return fromJsonList(Account[].class, apiService.get("/accounts").asString(), "accounts");
     }
 
     @Override

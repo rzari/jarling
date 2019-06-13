@@ -1,9 +1,6 @@
 package org.jarling;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.TypeAdapter;
+import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import org.jarling.services.ApiService;
@@ -67,7 +64,11 @@ public abstract class StarlingBase {
         return Arrays.asList(gson.fromJson(getJsonArray(json, memberName), clazz));
     }
 
-    final <T> T fromJson(String json, final Class<T> clazz) {
-        return gson.fromJson(json, clazz);
+    protected final String simpleJsonWrapper(String memberName, Object objectToWrap) {
+        String json = gson.toJson(objectToWrap);
+        JsonElement element = gson.fromJson(json, JsonElement.class);
+        JsonObject object = new JsonObject();
+        object.add(memberName, element);
+        return gson.toJson(object);
     }
 }
