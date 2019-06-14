@@ -6,6 +6,7 @@ import org.jarling.v2.models.apiuseridentity.Identity;
 import org.jarling.v2.models.individuals.Individual;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ApiUserIdentityTest extends BaseTest {
@@ -23,7 +24,7 @@ public class ApiUserIdentityTest extends BaseTest {
     public void testIdentity() {
         try {
             Identity identity = starling.getTokenIdentity();
-            assertTrue(identity.getCustomerUid().toString().matches(TestUtils.regexUUID));
+            assertNotNull(identity.getCustomerUid());
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

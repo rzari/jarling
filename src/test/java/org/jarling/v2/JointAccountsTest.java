@@ -5,6 +5,7 @@ import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.jointaccounts.JointAccount;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class JointAccountsTest extends BaseTest {
@@ -12,7 +13,7 @@ public class JointAccountsTest extends BaseTest {
     public void testJointAccount() {
         try {
             JointAccount jointAccount = starling.getJointAccount();
-            assertTrue(jointAccount.getAccountHolderUid().toString().matches(TestUtils.regexUUID));
+            assertNotNull(jointAccount.getAccountHolderUid());
             assertTrue(jointAccount.getPersonOne().getEmail().matches(TestUtils.regexEmail));
             assertTrue(jointAccount.getPersonTwo().getEmail().matches(TestUtils.regexEmail));
         } catch (StarlingBankRequestException se) {

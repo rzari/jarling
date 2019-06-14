@@ -2,7 +2,10 @@ package org.jarling.v2;
 
 import org.jarling.TestUtils;
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.accounts.*;
+import org.jarling.v2.models.accounts.Account;
+import org.jarling.v2.models.accounts.AccountIdentifiers;
+import org.jarling.v2.models.accounts.Balance;
+import org.jarling.v2.models.accounts.ConfirmationOfFunds;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -14,8 +17,8 @@ public class AccountsTest extends BaseTest {
     public void testAccounts() {
         try {
             Account account = starling.getAccounts().get(0);
-            assertTrue(account.getAccountUid().toString().matches(TestUtils.regexUUID));
-            assertTrue(account.getDefaultCategory().toString().matches(TestUtils.regexUUID));
+            assertNotNull(account.getAccountUid());
+            assertNotNull(account.getDefaultCategory());
             assertFalse(account.getCurrency().isEmpty());
             assertNotNull(account.getCreatedAt());
         } catch (StarlingBankRequestException se) {
