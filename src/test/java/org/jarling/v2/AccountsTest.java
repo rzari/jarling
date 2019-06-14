@@ -8,6 +8,7 @@ import org.jarling.v2.models.accounts.Balance;
 import org.jarling.v2.models.accounts.ConfirmationOfFunds;
 import org.junit.Test;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -46,7 +47,7 @@ public class AccountsTest extends BaseTest {
             UUID accountUid = starling.getAccounts().get(0).getAccountUid();
             Balance balance = starling.getAccountBalance(accountUid);
             assertFalse(balance.getAmount().getCurrency().isEmpty());
-            assertTrue(balance.getAmount().getMinorUnits() >= 0);
+            assertTrue(balance.getAmount().getMinorUnits().compareTo(BigInteger.ZERO) >= 0);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -61,7 +62,7 @@ public class AccountsTest extends BaseTest {
             ConfirmationOfFunds funds = starling.getConfirmationOfFunds(accountUid, balance.getAvailableToSpend().getMinorUnits());
             assertTrue(funds.isRequestedAmountAvailableToSpend());
 
-            funds = starling.getConfirmationOfFunds(accountUid, balance.getAvailableToSpend().getMinorUnits() + 1);
+            funds = starling.getConfirmationOfFunds(accountUid, balance.getAvailableToSpend().getMinorUnits().add(BigInteger.ONE));
             assertFalse(funds.isRequestedAmountAvailableToSpend());
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);

@@ -10,7 +10,10 @@ import org.jarling.models.transactions.FeedItemAttachmentData;
 import org.jarling.v2.api.*;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
-import org.jarling.v2.models.accounts.*;
+import org.jarling.v2.models.accounts.Account;
+import org.jarling.v2.models.accounts.AccountIdentifiers;
+import org.jarling.v2.models.accounts.Balance;
+import org.jarling.v2.models.accounts.ConfirmationOfFunds;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
@@ -23,6 +26,7 @@ import org.jarling.v2.models.transactionfeed.FeedItem;
 import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -157,8 +161,8 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
-    public ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, long targetAmountInMinorUnits) throws StarlingBankRequestException {
-        HttpParameter[] parameters = new HttpParameter[]{new HttpParameter("targetAmountInMinorUnits", targetAmountInMinorUnits)};
+    public ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, BigInteger targetAmountInMinorUnits) throws StarlingBankRequestException {
+        HttpParameter[] parameters = new HttpParameter[]{new HttpParameter("targetAmountInMinorUnits", targetAmountInMinorUnits.toString())};
         return gson.fromJson(apiService.get("/accounts/" + accountUid.toString() + "/confirmation-of-funds", parameters).asString(), ConfirmationOfFunds.class);
     }
 

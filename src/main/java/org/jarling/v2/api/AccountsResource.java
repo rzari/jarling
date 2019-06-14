@@ -1,8 +1,12 @@
 package org.jarling.v2.api;
 
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.accounts.*;
+import org.jarling.v2.models.accounts.Account;
+import org.jarling.v2.models.accounts.AccountIdentifiers;
+import org.jarling.v2.models.accounts.Balance;
+import org.jarling.v2.models.accounts.ConfirmationOfFunds;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,5 +47,5 @@ public interface AccountsResource {
      * @return ConfirmationOfFunds
      * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
-    ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, long targetAmountInMinorUnits) throws StarlingBankRequestException;
+    ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, BigInteger targetAmountInMinorUnits) throws StarlingBankRequestException;
 }
