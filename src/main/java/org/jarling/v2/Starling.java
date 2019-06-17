@@ -198,11 +198,14 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Date changesSince) throws StarlingBankRequestException {
+        HttpParameter changesSinceParameter = new HttpParameter("changesSince", formatDateIso8601(changesSince));
+        HttpParameter[] parameters = new HttpParameter[]{changesSinceParameter};
         return fromJsonList(
             FeedItem[].class,
             apiService.get(
                 "/feed/account/" + accountUid.toString()
-                    + "/category/" + categoryUid.toString()
+                    + "/category/" + categoryUid.toString(),
+                parameters
             ).asString(),
             "feedItems"
         );

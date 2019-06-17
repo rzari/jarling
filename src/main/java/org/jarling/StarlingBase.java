@@ -10,7 +10,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Base service to provide some convenience functions and utilities to all service classes
@@ -70,5 +72,12 @@ public abstract class StarlingBase {
         JsonObject object = new JsonObject();
         object.add(memberName, element);
         return gson.toJson(object);
+    }
+
+    protected final String formatDateIso8601(Date date) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+        df.setTimeZone(tz);
+        return df.format(date);
     }
 }

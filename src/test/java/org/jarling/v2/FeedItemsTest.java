@@ -8,8 +8,10 @@ import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
 import org.junit.Test;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +26,7 @@ public class FeedItemsTest extends BaseTest {
             Account account = starling.getAccounts().get(0);
             UUID accountUid = account.getAccountUid();
             UUID categoryUid = account.getDefaultCategory();
-            FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, Date.valueOf("2019-01-01")).get(0);
+            FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, getDefaultDate()).get(0);
 
             SpendingCategory spendingCategory = feedItem.getSpendingCategory();
             SpendingCategory newSpendingCategory = spendingCategory == SpendingCategory.BILLS_AND_SERVICES
@@ -47,7 +49,7 @@ public class FeedItemsTest extends BaseTest {
             Account account = starling.getAccounts().get(0);
             UUID accountUid = account.getAccountUid();
             UUID categoryUid = account.getDefaultCategory();
-            List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, Date.valueOf("2019-01-01"));
+            List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, getDefaultDate());
 
             FeedItem feedItem = starling.getFeedItem(accountUid, categoryUid, feedItems.get(0).getFeedItemUid());
 
@@ -64,9 +66,20 @@ public class FeedItemsTest extends BaseTest {
             UUID accountUid = account.getAccountUid();
             UUID categoryUid = account.getDefaultCategory();
 
-            List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, Date.valueOf("2019-01-01"));
+            List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, getDefaultDate());
 
             assertFeedItemValid(feedItems.get(0));
+
+            Date dateSince = feedItems.get(0).getTransactionTime();
+
+            List<FeedItem> filteredFeedItems = starling.getFeedItems(accountUid, categoryUid, dateSince);
+
+            assertEquals(
+                0,
+                filteredFeedItems.stream()
+                    .filter(item -> item.getUpdatedAt().before(dateSince))
+                    .count()
+            );
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -78,7 +91,7 @@ public class FeedItemsTest extends BaseTest {
             Account account = starling.getAccounts().get(0);
             UUID accountUid = account.getAccountUid();
             UUID categoryUid = account.getDefaultCategory();
-            FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, Date.valueOf("2019-01-01")).get(0);
+            FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, getDefaultDate()).get(0);
 
             starling.getFeedItemAttachments(accountUid, categoryUid, feedItem.getFeedItemUid());
         } catch (StarlingBankRequestException se) {
@@ -92,7 +105,7 @@ public class FeedItemsTest extends BaseTest {
             Account account = starling.getAccounts().get(0);
             UUID accountUid = account.getAccountUid();
             UUID categoryUid = account.getDefaultCategory();
-            List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, Date.valueOf("2019-01-01"));
+            List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, getDefaultDate());
             List<FeedItemAttachment> attachments = feedItems.stream()
                 .map(feedItem -> {
                     try {
@@ -123,7 +136,7 @@ public class FeedItemsTest extends BaseTest {
             Account account = starling.getAccounts().get(0);
             UUID accountUid = account.getAccountUid();
             UUID categoryUid = account.getDefaultCategory();
-            FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, Date.valueOf("2019-01-01")).get(0);
+            FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, getDefaultDate()).get(0);
 
             String userNote = feedItem.getUserNote();
             String newUserNote = "Additional text. " + userNote;
@@ -153,5 +166,13 @@ public class FeedItemsTest extends BaseTest {
         assertFalse(feedItem.getReference().isEmpty());
         assertNotNull(feedItem.getCountry());
         assertNotNull(feedItem.getSpendingCategory());
+    }
+
+    private static Date getDefaultDate() {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd").parse("2019-01-01");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
