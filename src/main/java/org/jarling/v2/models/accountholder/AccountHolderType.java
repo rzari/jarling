@@ -1,5 +1,8 @@
 package org.jarling.v2.models.accountholder;
 
+import lombok.Getter;
+
+@Getter
 public enum AccountHolderType {
     INDIVIDUAL("INDIVIDUAL"),
     BUSINESS("BUSINESS"),
@@ -10,8 +13,4 @@ public enum AccountHolderType {
     private final String value;
 
     AccountHolderType(String value){ this.value = value; }
-
-    public String getValue() {
-        return this.value;
-    }
 }
