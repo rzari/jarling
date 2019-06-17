@@ -27,7 +27,7 @@ import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
 
 import java.math.BigInteger;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -197,8 +197,8 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
-    public List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Date changesSince) throws StarlingBankRequestException {
-        HttpParameter changesSinceParameter = new HttpParameter("changesSince", formatDateIso8601(changesSince));
+    public List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Instant changesSince) throws StarlingBankRequestException {
+        HttpParameter changesSinceParameter = new HttpParameter("changesSince", changesSince.toString());
         HttpParameter[] parameters = new HttpParameter[]{changesSinceParameter};
         return fromJsonList(
             FeedItem[].class,

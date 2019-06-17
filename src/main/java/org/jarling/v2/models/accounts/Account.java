@@ -2,7 +2,7 @@ package org.jarling.v2.models.accounts;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -13,5 +13,5 @@ public class Account {
     private final UUID accountUid;
     private final UUID defaultCategory;
     private final String currency;
-    private final Date createdAt;
+    private final Instant createdAt;
 }

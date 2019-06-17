@@ -8,11 +8,10 @@ import org.jarling.services.ApiService;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Base service to provide some convenience functions and utilities to all service classes
@@ -32,18 +31,29 @@ public abstract class StarlingBase {
     }
 
     protected final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
-                @Override
-                public void write(final JsonWriter jsonWriter, final LocalDate localDate) throws IOException {
-                    jsonWriter.value(localDate.toString());
-                }
+        .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
+            @Override
+            public void write(final JsonWriter jsonWriter, final LocalDate localDate) throws IOException {
+                jsonWriter.value(localDate.toString());
+            }
 
-                @Override
-                public LocalDate read(final JsonReader jsonReader) throws IOException {
-                    return LocalDate.parse(jsonReader.nextString());
-                }
-            }.nullSafe())
-            .create();
+            @Override
+            public LocalDate read(final JsonReader jsonReader) throws IOException {
+                return LocalDate.parse(jsonReader.nextString());
+            }
+        }.nullSafe())
+        .registerTypeAdapter(Instant.class, new TypeAdapter<Instant>() {
+            @Override
+            public void write(JsonWriter jsonWriter, Instant instant) throws IOException {
+                jsonWriter.value(instant.toString());
+            }
+
+            @Override
+            public Instant read(JsonReader jsonReader) throws IOException {
+                return Instant.parse(jsonReader.nextString());
+            }
+        })
+        .create();
     static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private JsonObject toJsonObject(String json) {
@@ -72,12 +82,5 @@ public abstract class StarlingBase {
         JsonObject object = new JsonObject();
         object.add(memberName, element);
         return gson.toJson(object);
-    }
-
-    protected final String formatDateIso8601(Date date) {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-        df.setTimeZone(tz);
-        return df.format(date);
     }
 }

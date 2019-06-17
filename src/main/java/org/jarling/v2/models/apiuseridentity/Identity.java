@@ -2,7 +2,7 @@ package org.jarling.v2.models.apiuseridentity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 public class Identity {
     private UUID accountHolderUid;
-    private Date expiresAt;
+    private Instant expiresAt;
     private Long expiresInSeconds;
     private String[] scopes;
     private Boolean authenticated;

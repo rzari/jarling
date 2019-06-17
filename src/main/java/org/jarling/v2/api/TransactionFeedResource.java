@@ -6,7 +6,7 @@ import org.jarling.v2.models.transactionfeed.FeedItem;
 import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public interface TransactionFeedResource {
      * @return List<FeedItem>
      * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
-    List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Date changesSince) throws StarlingBankRequestException;
+    List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Instant changesSince) throws StarlingBankRequestException;
 
     /**
      * Fetches the list of items attached to a feed item

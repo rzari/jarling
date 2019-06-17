@@ -8,10 +8,8 @@ import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
 import org.junit.Test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
-public class FeedItemsTest extends BaseTest {
+public class TransactionFeedTest extends BaseTest {
     @Test
     public void testUpdateSpendingCategory() {
         try {
@@ -70,14 +68,14 @@ public class FeedItemsTest extends BaseTest {
 
             assertFeedItemValid(feedItems.get(0));
 
-            Date dateSince = feedItems.get(0).getTransactionTime();
+            Instant dateSince = feedItems.get(0).getTransactionTime();
 
             List<FeedItem> filteredFeedItems = starling.getFeedItems(accountUid, categoryUid, dateSince);
 
             assertEquals(
                 0,
                 filteredFeedItems.stream()
-                    .filter(item -> item.getUpdatedAt().before(dateSince))
+                    .filter(item -> item.getUpdatedAt().isBefore(dateSince))
                     .count()
             );
         } catch (StarlingBankRequestException se) {
@@ -168,11 +166,7 @@ public class FeedItemsTest extends BaseTest {
         assertNotNull(feedItem.getSpendingCategory());
     }
 
-    private static Date getDefaultDate() {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse("2019-01-01");
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    private static Instant getDefaultDate() {
+        return Instant.parse("2019-01-01T00:00:00.00Z");
     }
 }

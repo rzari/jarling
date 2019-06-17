@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import lombok.Data;
 import org.jarling.v2.models.accounts.CurrencyAndAmount;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -17,9 +17,9 @@ public class FeedItem {
     private final CurrencyAndAmount amount;
     private final CurrencyAndAmount sourceAmount;
     private final Direction direction;
-    private final Date updatedAt;
-    private final Date transactionTime;
-    private final Date settlementTime;
+    private final Instant updatedAt;
+    private final Instant transactionTime;
+    private final Instant settlementTime;
     private final Source source;
     private final SourceSubType sourceSubType;
     private final CounterPartyType counterPartyType;
