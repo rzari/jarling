@@ -9,9 +9,9 @@ import java.time.LocalDate;
  */
 @Data
 public class Individual {
-    private final String firstName;
-    private final String lastName;
-    private final LocalDate dateOfBirth;
-    private final String email;
-    private final String phone;
+    private String firstName;
+    private String lastName;
+    private LocalDate dateOfBirth;
+    private String email;
+    private String phone;
 }

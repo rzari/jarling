@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 @Data
 public class JointAccount {
-    private final UUID accountHolderUid;
-    private final Individual personOne;
-    private final Individual personTwo;
+    private UUID accountHolderUid;
+    private Individual personOne;
+    private Individual personTwo;
 }

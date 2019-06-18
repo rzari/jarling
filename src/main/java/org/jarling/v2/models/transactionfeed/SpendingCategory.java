@@ -24,7 +24,7 @@ public enum SpendingCategory {
     LIFESTYLE("LIFESTYLE"),
     NONE("NONE");
 
-    private String value;
+    private final String value;
 
     SpendingCategory(String value) {
         this.value = value;

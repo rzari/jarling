@@ -9,8 +9,8 @@ import java.time.Instant;
  */
 @Data
 public class KycResult {
-    private final Instant issuedTimestamp;
-    private final String fraudDecision;
-    private final String amlDecision;
-    private final String bureau;
+    private Instant issuedTimestamp;
+    private String fraudDecision;
+    private String amlDecision;
+    private String bureau;
 }

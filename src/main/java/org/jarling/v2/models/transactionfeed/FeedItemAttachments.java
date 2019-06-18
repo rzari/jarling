@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class FeedItemAttachments {
-    private final List<FeedItemAttachment> feedItemAttachments;
+    private List<FeedItemAttachment> feedItemAttachments;
 }

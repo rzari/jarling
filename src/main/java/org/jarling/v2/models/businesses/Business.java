@@ -7,8 +7,8 @@ import lombok.Data;
  */
 @Data
 public class Business {
-    private final String companyName;
-    private final String companyRegistrationNumber;
-    private final String email;
-    private final String phone;
+    private String companyName;
+    private String companyRegistrationNumber;
+    private String email;
+    private String phone;
 }

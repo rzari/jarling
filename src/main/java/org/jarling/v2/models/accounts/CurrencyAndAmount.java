@@ -9,6 +9,6 @@ import java.math.BigInteger;
  */
 @Data
 public class CurrencyAndAmount {
-    private final String currency;
-    private final BigInteger minorUnits;
+    private String currency;
+    private BigInteger minorUnits;
 }

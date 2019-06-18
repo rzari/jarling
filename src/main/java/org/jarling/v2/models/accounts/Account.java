@@ -10,8 +10,8 @@ import java.util.UUID;
  */
 @Data
 public class Account {
-    private final UUID accountUid;
-    private final UUID defaultCategory;
-    private final String currency;
-    private final Instant createdAt;
+    private UUID accountUid;
+    private UUID defaultCategory;
+    private String currency;
+    private Instant createdAt;
 }

@@ -7,8 +7,8 @@ import lombok.Data;
  */
 @Data
 public class AccountIdentifiers {
-    private final String accountIdentifier;
-    private final String bankIdentifier;
-    private final String iban;
-    private final String bic;
+    private String accountIdentifier;
+    private String bankIdentifier;
+    private String iban;
+    private String bic;
 }

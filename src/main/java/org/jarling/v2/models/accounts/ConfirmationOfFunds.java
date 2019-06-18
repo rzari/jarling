@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public class ConfirmationOfFunds {
-    private final boolean requestedAmountAvailableToSpend;
+    private boolean requestedAmountAvailableToSpend;
 }

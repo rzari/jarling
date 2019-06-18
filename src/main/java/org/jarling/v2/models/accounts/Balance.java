@@ -7,10 +7,10 @@ import lombok.Data;
  */
 @Data
 public class Balance {
-    private final CurrencyAndAmount clearedBalance;
-    private final CurrencyAndAmount effectiveBalance;
-    private final CurrencyAndAmount pendingTransactions;
-    private final CurrencyAndAmount availableToSpend;
-    private final CurrencyAndAmount acceptedOverdraft;
-    private final CurrencyAndAmount amount;
+    private CurrencyAndAmount clearedBalance;
+    private CurrencyAndAmount effectiveBalance;
+    private CurrencyAndAmount pendingTransactions;
+    private CurrencyAndAmount availableToSpend;
+    private CurrencyAndAmount acceptedOverdraft;
+    private CurrencyAndAmount amount;
 }

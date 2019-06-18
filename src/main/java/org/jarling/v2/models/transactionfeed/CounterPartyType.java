@@ -13,7 +13,7 @@ public enum CounterPartyType {
     STARLING("STARLING"),
     LOAN("LOAN");
 
-    private String value;
+    private final String value;
 
     CounterPartyType(String value) {
         this.value = value;
