@@ -7,10 +7,10 @@ import java.util.UUID;
 
 @Data
 public class WebhookPayload<T> {
-    private final Date timestamp;
-    private final UUID accountHolderUid;
-    private final UUID webhookNotificationUid;
-    private final WebhookType webhookType;
+    private Date timestamp;
+    private UUID accountHolderUid;
+    private UUID webhookNotificationUid;
+    private WebhookType webhookType;
 
-    private final T content;
+    private T content;
 }
