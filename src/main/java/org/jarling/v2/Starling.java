@@ -22,6 +22,9 @@ import org.jarling.v2.models.businesses.Business;
 import org.jarling.v2.models.individuals.Individual;
 import org.jarling.v2.models.jointaccounts.JointAccount;
 import org.jarling.v2.models.kyc.KycResult;
+import org.jarling.v2.models.payees.Payee;
+import org.jarling.v2.models.payees.PayeeAccountCreationRequest;
+import org.jarling.v2.models.payees.PayeeCreationRequest;
 import org.jarling.v2.models.transactionfeed.FeedItem;
 import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
@@ -247,6 +250,38 @@ public final class Starling extends StarlingBase implements StarlingBank {
             null,
             null,
             simpleJsonWrapper("userNote", userNote)
+        );
+    }
+
+    @Override
+    public PayeesResource payees() {
+        return this;
+    }
+
+    @Override
+    public List<Payee> getPayees() throws StarlingBankRequestException {
+        return fromJsonList(
+            Payee[].class,
+            apiService.get("/payees").asString(),
+            "payees"
+        );
+    }
+
+    @Override
+    public UUID createPayee(PayeeCreationRequest creationRequest) throws StarlingBankRequestException {
+        return unwrapJsonMember(
+            UUID.class,
+            apiService.put("/payees").asString(),
+            "payeeUid"
+        );
+    }
+
+    @Override
+    public UUID createPayeeAccount(UUID payeeUid, PayeeAccountCreationRequest creationRequest) throws StarlingBankRequestException {
+        return unwrapJsonMember(
+            UUID.class,
+            apiService.put("/payees/" + payeeUid + "/account").asString(),
+            "payeeAccountUid"
         );
     }
 }

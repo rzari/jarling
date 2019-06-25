@@ -60,7 +60,7 @@ public abstract class StarlingBase {
         return gson.fromJson(json, JsonObject.class);
     }
 
-    private String getJsonArray(String json, String memberName) {
+    private String unwrapJsonMember(String json, String memberName) {
         JsonObject jsonObject = toJsonObject(json);
         String result;
         if (jsonObject.has("_embedded")) {
@@ -71,9 +71,13 @@ public abstract class StarlingBase {
         return result;
     }
 
+    protected final <T> T unwrapJsonMember(final Class<T> clazz, String json, String memberName) {
+        return gson.fromJson(unwrapJsonMember(json, memberName), clazz);
+    }
+
     // https://stackoverflow.com/questions/14139437/java-type-generic-as-argument-for-gson
     protected final <T> List<T> fromJsonList(final Class<T[]> clazz, String json, String memberName) {
-        return Arrays.asList(gson.fromJson(getJsonArray(json, memberName), clazz));
+        return Arrays.asList(unwrapJsonMember(clazz, json, memberName));
     }
 
     protected final String simpleJsonWrapper(String memberName, Object objectToWrap) {
