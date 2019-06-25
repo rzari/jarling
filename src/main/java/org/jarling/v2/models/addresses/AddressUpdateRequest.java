@@ -1,10 +1,7 @@
 package org.jarling.v2.models.addresses;
 
 import com.neovisionaries.i18n.CountryCode;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -12,6 +9,7 @@ import java.time.LocalDate;
  * Address update request
  */
 @Data
+@ToString(onlyExplicitlyIncluded = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class AddressUpdateRequest {

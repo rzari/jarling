@@ -2,6 +2,7 @@ package org.jarling.v2.models.transactionfeed;
 
 import com.neovisionaries.i18n.CountryCode;
 import lombok.Data;
+import lombok.ToString;
 import org.jarling.v2.models.accounts.CurrencyAndAmount;
 
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.util.UUID;
  * Item in the transaction feed
  */
 @Data
+@ToString(onlyExplicitlyIncluded = true)
 public class FeedItem {
     private UUID feedItemUid;
     private UUID categoryUid;
