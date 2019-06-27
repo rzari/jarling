@@ -1,6 +1,10 @@
 package org.jarling.v2;
 
 import org.jarling.v2.api.*;
+import org.jarling.v2.http.CertificateType;
+
+import java.security.PrivateKey;
+import java.util.UUID;
 
 public interface StarlingBank extends AccountHolderResource, AccountsResource, AddressesResource, ApiUserIdentityResource, BusinessesResource, TransactionFeedResource, IndividualsResource, JointAccountsResource, KycResource, PayeesResource {
     AccountHolderResource accountHolder();
@@ -13,4 +17,7 @@ public interface StarlingBank extends AccountHolderResource, AccountsResource, A
     JointAccountsResource jointAccounts();
     KycResource kyc();
     PayeesResource payees();
+
+    void configureRequestSigning(PrivateKey privateKey, UUID publicKeyUid, CertificateType certificateType);
+    boolean canSignRequests();
 }

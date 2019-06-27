@@ -1,13 +1,11 @@
 package org.jarling.v2;
 
-import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
-import org.jarling.StarlingBase;
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.http.HttpParameter;
 import org.jarling.http.HttpResponse;
 import org.jarling.models.transactions.FeedItemAttachmentData;
 import org.jarling.v2.api.*;
+import org.jarling.v2.http.CertificateType;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.jarling.v2.models.accountholder.AccountHolderName;
 import org.jarling.v2.models.accounts.Account;
@@ -30,8 +28,11 @@ import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
 
 import java.math.BigInteger;
+import java.security.PrivateKey;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -40,7 +41,17 @@ import java.util.UUID;
 public final class Starling extends StarlingBase implements StarlingBank {
 
     public Starling(StarlingBankEnvironment environment, String accessToken) {
-        super(StarlingBankApiVersion.V2, environment, accessToken);
+        super(environment, accessToken);
+    }
+
+    @Override
+    public void configureRequestSigning(PrivateKey privateKey, UUID publicKeyUid, CertificateType certificateType) {
+        apiService.configureRequestSigning(privateKey, publicKeyUid, certificateType);
+    }
+
+    @Override
+    public boolean canSignRequests() {
+        return apiService.canSignRequests();
     }
 
     @Override
@@ -70,7 +81,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public void updateAddress(AddressUpdateRequest addressUpdateRequest) throws StarlingBankRequestException {
-        apiService.post("/addresses", null, null, gson.toJson(addressUpdateRequest));
+        apiService.postSigned("/addresses", gson.toJson(addressUpdateRequest));
     }
 
     @Override
@@ -120,7 +131,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public void updateEmail(String email) throws StarlingBankRequestException {
-        apiService.put("/account-holder/individual/email", null, null, simpleJsonWrapper("email", email));
+        apiService.putSigned("/account-holder/individual/email", simpleJsonWrapper("email", email));
     }
 
     @Override
@@ -140,7 +151,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public KycResult getKycResult() throws StarlingBankRequestException {
-        return gson.fromJson(apiService.get("/kyc/result").asString(), KycResult.class);
+        return gson.fromJson(apiService.getSigned("/kyc/result").asString(), KycResult.class);
     }
 
     @Override
@@ -165,7 +176,8 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public ConfirmationOfFunds getConfirmationOfFunds(UUID accountUid, BigInteger targetAmountInMinorUnits) throws StarlingBankRequestException {
-        HttpParameter[] parameters = new HttpParameter[]{new HttpParameter("targetAmountInMinorUnits", targetAmountInMinorUnits.toString())};
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("targetAmountInMinorUnits", targetAmountInMinorUnits.toString());
         return gson.fromJson(apiService.get("/accounts/" + accountUid.toString() + "/confirmation-of-funds", parameters).asString(), ConfirmationOfFunds.class);
     }
 
@@ -176,13 +188,11 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public void updateSpendingCategory(UUID accountUid, UUID categoryUid, UUID feedItemUid, SpendingCategory spendingCategory) throws StarlingBankRequestException {
-        apiService.put(
+        apiService.putSigned(
             "/feed/account/" + accountUid.toString()
                 + "/category/" + categoryUid.toString()
                 + "/" + feedItemUid.toString()
                 + "/spending-category",
-            null,
-            null,
             simpleJsonWrapper("spendingCategory", spendingCategory)
         );
     }
@@ -201,8 +211,8 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Instant changesSince) throws StarlingBankRequestException {
-        HttpParameter changesSinceParameter = new HttpParameter("changesSince", changesSince.toString());
-        HttpParameter[] parameters = new HttpParameter[]{changesSinceParameter};
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("changesSince", changesSince.toString());
         return fromJsonList(
             FeedItem[].class,
             apiService.get(
@@ -242,13 +252,11 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public void updateUserNote(UUID accountUid, UUID categoryUid, UUID feedItemUid, String userNote) throws StarlingBankRequestException {
-        apiService.put(
+        apiService.putSigned(
             "/feed/account/" + accountUid.toString()
                 + "/category/" + categoryUid.toString()
                 + "/" + feedItemUid.toString()
                 + "/user-note",
-            null,
-            null,
             simpleJsonWrapper("userNote", userNote)
         );
     }
@@ -271,7 +279,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
     public UUID createPayee(PayeeCreationRequest creationRequest) throws StarlingBankRequestException {
         return unwrapJsonMember(
             UUID.class,
-            apiService.put("/payees").asString(),
+            apiService.putSigned("/payees", gson.toJson(creationRequest)).asString(),
             "payeeUid"
         );
     }
@@ -280,7 +288,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
     public UUID createPayeeAccount(UUID payeeUid, PayeeAccountCreationRequest creationRequest) throws StarlingBankRequestException {
         return unwrapJsonMember(
             UUID.class,
-            apiService.put("/payees/" + payeeUid + "/account").asString(),
+            apiService.putSigned("/payees/" + payeeUid + "/account", gson.toJson(creationRequest)).asString(),
             "payeeAccountUid"
         );
     }
