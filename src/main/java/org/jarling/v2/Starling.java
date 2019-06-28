@@ -1,6 +1,7 @@
 package org.jarling.v2;
 
 import org.jarling.StarlingBankEnvironment;
+import org.jarling.StarlingBase;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.HttpResponse;
 import org.jarling.models.transactions.FeedItemAttachmentData;
@@ -39,9 +40,14 @@ import java.util.UUID;
  * API class responsible for creating services to access Starling Bank resources
  */
 public final class Starling extends StarlingBase implements StarlingBank {
+    private static ApiService apiService;
 
     public Starling(StarlingBankEnvironment environment, String accessToken) {
-        super(environment, accessToken);
+        if (accessToken == null || accessToken.equals("")) {
+            throw new IllegalArgumentException("access token cannot be null or blank");
+        } else {
+            apiService = new ApiService(environment, accessToken);
+        }
     }
 
     @Override

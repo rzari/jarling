@@ -39,6 +39,7 @@ import org.jarling.models.transactions.FasterPaymentsInTransaction;
 import org.jarling.models.transactions.FasterPaymentsOutTransaction;
 import org.jarling.models.transactions.MasterCardTransaction;
 import org.jarling.models.transactions.Transaction;
+import org.jarling.services.ApiService;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -53,13 +54,18 @@ import java.util.UUID;
  *
  */
 public final class Starling extends StarlingBase implements StarlingBank {
+    private static ApiService apiService;
 
     /**
      * @deprecated V1 APIs will be retired in Q4 2019. Use {@link org.jarling.v2.Starling(StarlingBankEnvironment, String)} ()}
      */
     @Deprecated
-    public Starling(StarlingBankEnvironment environment, String accessToken){
-        super(StarlingBankApiVersion.V1, environment, accessToken);
+    public Starling(StarlingBankEnvironment environment, String accessToken) {
+        if (accessToken == null || accessToken.equals("")) {
+            throw new IllegalArgumentException("access token cannot be null or blank");
+        } else {
+            apiService = new ApiService(StarlingBankApiVersion.V1, environment, accessToken);
+        }
     }
 
     @Override

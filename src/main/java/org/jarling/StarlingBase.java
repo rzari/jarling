@@ -19,17 +19,6 @@ import java.util.List;
  * @author Nav Roudsari (nav@rzari.co.uk)
  */
 public abstract class StarlingBase {
-
-    protected static ApiService apiService;
-
-    public StarlingBase(StarlingBankApiVersion apiVersion, StarlingBankEnvironment environment, String accessToken) {
-        if (accessToken == null || accessToken.equals("")) {
-            throw new IllegalArgumentException("access token cannot be null or blank");
-        } else {
-            apiService = new ApiService(apiVersion, environment, accessToken);
-        }
-    }
-
     protected final Gson gson = new GsonBuilder()
         .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
             @Override
