@@ -52,6 +52,7 @@ public abstract class BaseTest {
     public void failOnStarlingBankException(StarlingBankRequestException se) {
         assumeFalse(se.getReason().equals("{\"errors\":[{\"message\":\"endpoint called with non-business account\"}],\"success\":false}\n"));
         assumeFalse(se.getReason().equals("{\"errors\":[{\"message\":\"endpoint called with non-joint account\"}],\"success\":false}\n"));
+        assumeFalse(se.getReason().contains("\"error\":\"insufficient_scope\""));
         fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
     }
 

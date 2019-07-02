@@ -8,7 +8,6 @@ import org.jarling.v2.models.payments.*;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -182,7 +181,6 @@ public class PaymentsTest extends BaseTest {
             assertNotNull(payment.getPayeeUid());
             assertNotNull(payment.getPayeeAccountUid());
             assertNotNull(payment.getCreatedAt());
-            assertTrue(payment.getCreatedAt().isBefore(Instant.now()));
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }
