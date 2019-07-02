@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.jarling.v2.Validators.assertValidMimeType;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
@@ -91,7 +92,13 @@ public class TransactionFeedTest extends BaseTest {
             UUID categoryUid = account.getDefaultCategory();
             FeedItem feedItem = starling.getFeedItems(accountUid, categoryUid, getDefaultDate()).get(0);
 
-            starling.getFeedItemAttachments(accountUid, categoryUid, feedItem.getFeedItemUid());
+            List<FeedItemAttachment> attachments = starling.getFeedItemAttachments(accountUid, categoryUid, feedItem.getFeedItemUid());
+
+            attachments.forEach(attachment -> {
+                assertNotNull(attachment.getFeedItemAttachmentUid());
+                assertNotNull(attachment.getFeedItemUid());
+                assertValidMimeType(attachment.getAttachmentType());
+            });
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -121,7 +128,7 @@ public class TransactionFeedTest extends BaseTest {
 
             FeedItemAttachmentData data = starling.getFeedItemAttachment(accountUid, categoryUid, attachment.getFeedItemUid(), attachment.getFeedItemAttachmentUid());
 
-            assertFalse(data.getContentType().isEmpty());
+            assertEquals(attachment.getAttachmentType(), data.getContentType());
             assertNotEquals(0, data.getData().length);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);

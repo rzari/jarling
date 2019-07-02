@@ -1,12 +1,11 @@
 package org.jarling.v2;
 
-import org.jarling.TestUtils;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.jointaccounts.JointAccount;
 import org.junit.Test;
 
+import static org.jarling.v2.Validators.assertValid;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class JointAccountsTest extends BaseTest {
     @Test
@@ -14,8 +13,8 @@ public class JointAccountsTest extends BaseTest {
         try {
             JointAccount jointAccount = starling.getJointAccount();
             assertNotNull(jointAccount.getAccountHolderUid());
-            assertTrue(jointAccount.getPersonOne().getEmail().matches(TestUtils.regexEmail));
-            assertTrue(jointAccount.getPersonTwo().getEmail().matches(TestUtils.regexEmail));
+            assertValid(jointAccount.getPersonOne());
+            assertValid(jointAccount.getPersonTwo());
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

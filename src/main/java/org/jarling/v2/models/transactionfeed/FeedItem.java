@@ -3,7 +3,7 @@ package org.jarling.v2.models.transactionfeed;
 import com.neovisionaries.i18n.CountryCode;
 import lombok.Data;
 import lombok.ToString;
-import org.jarling.v2.models.accounts.CurrencyAndAmount;
+import org.jarling.v2.models.common.CurrencyAndAmount;
 
 import java.time.Instant;
 import java.util.UUID;

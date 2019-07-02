@@ -2,6 +2,7 @@ package org.jarling.v2.models.accounts;
 
 import lombok.Data;
 import lombok.ToString;
+import org.jarling.v2.models.common.CurrencyAndAmount;
 
 /**
  * Balance details

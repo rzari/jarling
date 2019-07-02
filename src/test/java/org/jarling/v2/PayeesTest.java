@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.jarling.v2.Validators.assertValid;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
@@ -23,8 +24,7 @@ public class PayeesTest extends BaseTest {
 
             Payee firstPayee = payees.get(0);
 
-            assertNotNull(firstPayee.getPayeeUid());
-            assertNotNull(firstPayee.getPayeeName());
+            assertValid(firstPayee);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -58,25 +58,29 @@ public class PayeesTest extends BaseTest {
             assertEquals(1, relevantPayeeList.size());
 
             Payee payee = relevantPayeeList.get(0);
-            assertEquals(payeeCreation.getPayeeName(), payee.getPayeeName());
-            assertEquals(payeeCreation.getPayeeType(), payee.getPayeeType());
-            assertEquals(payeeCreation.getPhoneNumber(), payee.getPhoneNumber());
-            assertEquals(payeeCreation.getFirstName(), payee.getFirstName());
-            assertEquals(payeeCreation.getMiddleName(), payee.getMiddleName());
-            assertEquals(payeeCreation.getLastName(), payee.getLastName());
-            assertEquals(payeeCreation.getBusinessName(), payee.getBusinessName());
-            assertEquals(payeeCreation.getDateOfBirth(), payee.getDateOfBirth());
-
-            assertEquals(payeeCreation.getAccounts().size(), payee.getAccounts().size());
-
-            IntStream.range(0, payee.getAccounts().size()).forEach(i -> {
-                PayeeAccountCreationRequest creationRequest = payeeCreation.getAccounts().get(i);
-                PayeeAccount account = payee.getAccounts().get(i);
-                assertPayeeAccountValid(creationRequest, account);
-            });
+            assertMatching(payeeCreation, payee);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
+    }
+
+    private static void assertMatching(PayeeCreationRequest payeeCreation, Payee payee) {
+        assertEquals(payeeCreation.getPayeeName(), payee.getPayeeName());
+        assertEquals(payeeCreation.getPayeeType(), payee.getPayeeType());
+        assertEquals(payeeCreation.getPhoneNumber(), payee.getPhoneNumber());
+        assertEquals(payeeCreation.getFirstName(), payee.getFirstName());
+        assertEquals(payeeCreation.getMiddleName(), payee.getMiddleName());
+        assertEquals(payeeCreation.getLastName(), payee.getLastName());
+        assertEquals(payeeCreation.getBusinessName(), payee.getBusinessName());
+        assertEquals(payeeCreation.getDateOfBirth(), payee.getDateOfBirth());
+
+        assertEquals(payeeCreation.getAccounts().size(), payee.getAccounts().size());
+
+        IntStream.range(0, payee.getAccounts().size()).forEach(i -> {
+            PayeeAccountCreationRequest creationRequest = payeeCreation.getAccounts().get(i);
+            PayeeAccount account = payee.getAccounts().get(i);
+            assertMatching(creationRequest, account);
+        });
     }
 
     @Test
@@ -102,13 +106,13 @@ public class PayeesTest extends BaseTest {
 
             PayeeAccount createdAccount = accounts.get(0);
 
-            assertPayeeAccountValid(accountCreation, createdAccount);
+            assertMatching(accountCreation, createdAccount);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
     }
 
-    private static void assertPayeeAccountValid(PayeeAccountCreationRequest creationRequest, PayeeAccount account) {
+    private static void assertMatching(PayeeAccountCreationRequest creationRequest, PayeeAccount account) {
         assertEquals(creationRequest.getDescription(), account.getDescription());
         assertEquals(creationRequest.isDefaultAccount(), account.isDefaultAccount());
         assertEquals(creationRequest.getCountryCode(), account.getCountryCode());

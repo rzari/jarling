@@ -1,4 +1,4 @@
-package org.jarling.v2.models.accounts;
+package org.jarling.v2.models.common;
 
 import lombok.Data;
 import lombok.ToString;

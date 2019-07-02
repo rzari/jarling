@@ -8,7 +8,6 @@ import org.jarling.models.transactions.FeedItemAttachmentData;
 import org.jarling.v2.api.*;
 import org.jarling.v2.http.CertificateType;
 import org.jarling.v2.models.accountholder.AccountHolder;
-import org.jarling.v2.models.accountholder.AccountHolderName;
 import org.jarling.v2.models.accounts.Account;
 import org.jarling.v2.models.accounts.AccountIdentifiers;
 import org.jarling.v2.models.accounts.Balance;
@@ -70,8 +69,12 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
-    public AccountHolderName getAccountHolderName() throws StarlingBankRequestException {
-        return gson.fromJson(apiService.get("/account-holder/name").asString(), AccountHolderName.class);
+    public String getAccountHolderName() throws StarlingBankRequestException {
+        return unwrapJsonMember(
+            String.class,
+            apiService.get("/account-holder/name").asString(),
+            "accountHolderName"
+        );
     }
 
     @Override

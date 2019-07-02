@@ -3,6 +3,8 @@ package org.jarling.v2.models.addresses;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
  * Current and previous physical addresses
  */
@@ -10,5 +12,5 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 public class Addresses {
     private Address current;
-    private Address[] previous;
+    private List<Address> previous;
 }

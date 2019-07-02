@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.models.accounts.AccountBalance;
 import org.jarling.v2.ApiService;
+import org.jarling.v2.models.jointaccounts.JointAccount;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class StarlingExceptionTests {
     public void testStarlingUnauthorizedException(){
         try {
             goodApiService = new ApiService(StarlingBankEnvironment.SANDBOX, "lol");
-            gson.fromJson(goodApiService.get("/accounts/balance").asString(), AccountBalance.class);
+            gson.fromJson(goodApiService.get("/account-holder/joint").asString(), JointAccount.class);
         } catch (StarlingBankRequestException e) {
             assertEquals(403, e.getStatusCode());
             assertEquals("Forbidden", e.getErrorMessage());

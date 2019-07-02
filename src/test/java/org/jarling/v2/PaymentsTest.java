@@ -2,7 +2,7 @@ package org.jarling.v2;
 
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.accounts.Account;
-import org.jarling.v2.models.accounts.CurrencyAndAmount;
+import org.jarling.v2.models.common.CurrencyAndAmount;
 import org.jarling.v2.models.payments.*;
 import org.junit.Test;
 
@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.jarling.v2.TestUtils.assertValid;
-import static org.jarling.v2.TestUtils.assertValidPaymentReference;
+import static org.jarling.v2.Validators.assertValid;
+import static org.jarling.v2.Validators.assertValidPaymentReference;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
@@ -233,10 +233,7 @@ public class PaymentsTest extends BaseTest {
     }
 
     private static CurrencyAndAmount createCurrencyAndAmount() {
-        CurrencyAndAmount amount = new CurrencyAndAmount();
-        amount.setCurrency("GBP");
-        amount.setMinorUnits(BigInteger.valueOf(123));
-        return amount;
+        return new CurrencyAndAmount("GBP", BigInteger.valueOf(123));
     }
 
 }

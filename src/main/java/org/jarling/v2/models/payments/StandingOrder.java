@@ -3,7 +3,7 @@ package org.jarling.v2.models.payments;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.ToString;
-import org.jarling.v2.models.accounts.CurrencyAndAmount;
+import org.jarling.v2.models.common.CurrencyAndAmount;
 
 import java.time.Instant;
 import java.time.LocalDate;
