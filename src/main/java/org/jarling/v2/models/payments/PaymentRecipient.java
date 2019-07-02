@@ -2,55 +2,30 @@ package org.jarling.v2.models.payments;
 
 import com.neovisionaries.i18n.CountryCode;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.ToString;
 import org.jarling.v2.models.payees.BankIdentifierType;
 import org.jarling.v2.models.payees.PayeeType;
 
 @Data
-@ToString(onlyExplicitlyIncluded = true )
+@ToString(onlyExplicitlyIncluded = true)
 public class PaymentRecipient {
     /**
-     * Payee name
-     *
-     * minLength: 1
-     * maxLength: 255
-     * Not null
+     * Payee name, 1-255 characters
      */
-    String payeeName;
+    private @NonNull String payeeName;
+
+    private @NonNull PayeeType payeeType;
+    private @NonNull CountryCode countryCode;
 
     /**
-     * Payee type
-     * Not null
+     * Account identifier, e.g. account number. 0-34 characters
      */
-    PayeeType payeeType;
+    private @NonNull String accountIdentifier;
 
     /**
-     * The country code for the account
-     * Not null
+     * Bank identifier, e.g. sort code. 0-34 characters
      */
-    CountryCode countryCode;
-
-    /**
-     * Account identifier, e.g. account number
-     *
-     * minLength: 0
-     * maxLength: 34
-     * Not null
-     */
-    String accountIdentifier;
-
-    /**
-     * Bank identifier, e.g. sort code
-     *
-     * minLength: 0
-     * maxLength: 34
-     * Not null
-     */
-    String bankIdentifier;
-
-    /**
-     * Bank identifier type
-     * Not null
-     */
-    BankIdentifierType bankIdentifierType;
+    private @NonNull String bankIdentifier;
+    private @NonNull BankIdentifierType bankIdentifierType;
 }

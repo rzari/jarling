@@ -1,6 +1,7 @@
 package org.jarling.v2.models.payments;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.ToString;
 import org.jarling.v2.models.common.CurrencyAndAmount;
 
@@ -11,33 +12,48 @@ import java.util.UUID;
 public class InstructLocalPaymentRequest {
     /**
      * A unique identifier to ensure idempotency
-     * Not null
      */
-    String externalIdentifier = UUID.randomUUID().toString();
+    private @NonNull String externalIdentifier = UUID.randomUUID().toString();
 
     /**
-     * Payment reference
-     * <p>
-     * minLength: 1
-     * maxLength: 18
-     * pattern: [a-zA-Z0-9-/?:().,+#=!%&*<>;{\@ "']{1,18}
-     * Not null
+     * Payment reference, 1-18 characters
+     * Allowed characters: a-zA-Z0-9-/?:().,+#=!%&*<>;@ "'{
      */
-    String reference;
+    private @NonNull String reference;
 
-    /**
-     * Payment amount
-     * Not null
-     */
-    CurrencyAndAmount amount;
+    private @NonNull CurrencyAndAmount amount;
 
     /**
      * The destination account. Must reference an existing PayeeAccount.
+     *
+     * Must be present if paymentRecipient is absent.
      */
-    UUID destinationPayeeAccountUid;
+    private UUID destinationPayeeAccountUid;
 
     /**
      * The destination account.
+     *
+     * Must be present if destinationPayeeAccountUid is absent.
      */
-    PaymentRecipient paymentRecipient;
+    private PaymentRecipient paymentRecipient;
+
+    public InstructLocalPaymentRequest(
+        @NonNull String reference,
+        @NonNull CurrencyAndAmount amount,
+        @NonNull UUID destinationPayeeAccountUid
+    ) {
+        this.reference = reference;
+        this.amount = amount;
+        this.destinationPayeeAccountUid = destinationPayeeAccountUid;
+    }
+
+    public InstructLocalPaymentRequest(
+        @NonNull String reference,
+        @NonNull CurrencyAndAmount amount,
+        @NonNull PaymentRecipient paymentRecipient
+    ) {
+        this.reference = reference;
+        this.amount = amount;
+        this.paymentRecipient = paymentRecipient;
+    }
 }

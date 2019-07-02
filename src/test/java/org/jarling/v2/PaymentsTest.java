@@ -1,5 +1,6 @@
 package org.jarling.v2;
 
+import com.neovisionaries.i18n.CurrencyCode;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.accounts.Account;
 import org.jarling.v2.models.common.CurrencyAndAmount;
@@ -109,11 +110,12 @@ public class PaymentsTest extends BaseTest {
             StandingOrder standingOrder = standingOrders.get(0);
 
 
-            UpdateStandingOrderRequest request = new UpdateStandingOrderRequest();
-            request.setPaymentOrderUid(standingOrder.getPaymentOrderUid());
-            request.setReference("updated reference");
-            request.setAmount(createCurrencyAndAmount());
-            request.setStandingOrderRecurrence(createStandingOrderRecurrence());
+            UpdateStandingOrderRequest request = new UpdateStandingOrderRequest(
+                standingOrder.getPaymentOrderUid(),
+                "updated reference",
+                createCurrencyAndAmount(),
+                createStandingOrderRecurrence()
+            );
 
             UUID standingOrderUid = starling.updateStandingOrder(accountUid, categoryUid, standingOrder.getPaymentOrderUid(), request);
 
@@ -192,12 +194,12 @@ public class PaymentsTest extends BaseTest {
             .getAccounts().get(0)
             .getPayeeAccountUid();
 
-        CreateStandingOrderRequest request = new CreateStandingOrderRequest();
-
-        request.setAmount(createCurrencyAndAmount());
-        request.setDestinationPayeeAccountUid(destinationAccountUid);
-        request.setReference("Ref");
-        request.setStandingOrderRecurrence(createStandingOrderRecurrence());
+        CreateStandingOrderRequest request = new CreateStandingOrderRequest(
+            destinationAccountUid,
+            "Ref",
+            createCurrencyAndAmount(),
+            createStandingOrderRecurrence()
+        );
 
         return starling.createStandingOrder(accountUid, categoryUid, request);
     }
@@ -211,21 +213,21 @@ public class PaymentsTest extends BaseTest {
             .getAccounts().get(0)
             .getPayeeAccountUid();
 
-        InstructLocalPaymentRequest paymentRequest = new InstructLocalPaymentRequest();
-
-        paymentRequest.setReference("Ref");
-
-        paymentRequest.setAmount(createCurrencyAndAmount());
-        paymentRequest.setDestinationPayeeAccountUid(destinationAccountUid);
+        InstructLocalPaymentRequest paymentRequest = new InstructLocalPaymentRequest(
+            "Ref",
+            createCurrencyAndAmount(),
+            destinationAccountUid
+        );
 
         return starling.createDomesticPayment(accountUid, categoryUid, paymentRequest);
 
     }
 
     private static StandingOrderRecurrence createStandingOrderRecurrence() {
-        StandingOrderRecurrence recurrence = new StandingOrderRecurrence();
-        recurrence.setStartDate(LocalDate.now());
-        recurrence.setFrequency(StandingOrderFrequency.DAILY);
+        StandingOrderRecurrence recurrence = new StandingOrderRecurrence(
+            LocalDate.now(),
+            StandingOrderFrequency.DAILY
+        );
         recurrence.setInterval(4);
         recurrence.setCount(100);
         recurrence.setUntilDate(null);
@@ -233,7 +235,7 @@ public class PaymentsTest extends BaseTest {
     }
 
     private static CurrencyAndAmount createCurrencyAndAmount() {
-        return new CurrencyAndAmount("GBP", BigInteger.valueOf(123));
+        return new CurrencyAndAmount(CurrencyCode.GBP, BigInteger.valueOf(123));
     }
 
 }

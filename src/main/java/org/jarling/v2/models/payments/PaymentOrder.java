@@ -9,9 +9,9 @@ import java.util.UUID;
 @Data
 @ToString(onlyExplicitlyIncluded = true)
 public class PaymentOrder {
-    UUID paymentOrderUid;
-    CurrencyAndAmount amount;
-    String reference;
-    UUID payeeUid;
-    UUID payeeAccountUid;
+    private UUID paymentOrderUid;
+    private CurrencyAndAmount amount;
+    private String reference;
+    private UUID payeeUid;
+    private UUID payeeAccountUid;
 }

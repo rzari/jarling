@@ -13,29 +13,45 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class AddressUpdateRequest {
-    public AddressUpdateRequest(String line1, String postTown, String postCode, String countryCode, LocalDate from) {
-        this(line1, null, null, postTown, postCode, countryCode, null, null, from);
-    }
+    /**
+     * First line, 0-255 characters
+     */
+    private @NonNull String line1;
 
-    public AddressUpdateRequest(String line1, String line2, String line3, String postTown, String postCode, String countryCode, String udprn, String umprn, LocalDate from) {
-        this.line1 = line1;
-        this.line2 = line2;
-        this.line3 = line3;
-        this.postTown = postTown;
-        this.postCode = postCode;
-        this.countryCode = CountryCode.getByCode(countryCode, false);
-        this.udprn = udprn;
-        this.umprn = umprn;
-        this.from = from;
-    }
-
-    @NonNull private String line1;
+    /**
+     * Second line, 0-255 characters
+     */
     private String line2;
+
+    /**
+     * Third line, 0-255 characters
+     */
     private String line3;
-    @NonNull private String postTown;
-    @NonNull private String postCode;
-    @NonNull private CountryCode countryCode;
+
+    /**
+     * Post town, 0-255 characters
+     */
+    private @NonNull String postTown;
+
+    /**
+     * Post code, 0-20 characters
+     */
+    private @NonNull String postCode;
+
+    private @NonNull CountryCode countryCode;
+
+    /**
+     * The udprn of the property, 0-255 characters
+     */
     private String udprn;
+
+    /**
+     * The umprn of the property, 0-255 characters
+     */
     private String umprn;
-    @NonNull private LocalDate from;
+
+    /**
+     * Date the account holder’s residency at this address started
+     */
+    private @NonNull LocalDate from;
 }

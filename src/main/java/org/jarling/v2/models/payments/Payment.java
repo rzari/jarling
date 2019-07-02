@@ -10,14 +10,14 @@ import java.util.UUID;
 @Data
 @ToString(onlyExplicitlyIncluded = true)
 public class Payment {
-    UUID paymentUid;
-    CurrencyAndAmount amount;
-    String reference;
-    UUID payeeUid;
-    UUID payeeAccountUid;
-    Instant createdAt;
+    private UUID paymentUid;
+    private CurrencyAndAmount amount;
+    private String reference;
+    private UUID payeeUid;
+    private UUID payeeAccountUid;
+    private Instant createdAt;
 
-    Instant completedAt;
-    Instant rejectedAt;
-    PaymentStatusDetails paymentStatusDetails;
+    private Instant completedAt;
+    private Instant rejectedAt;
+    private PaymentStatusDetails paymentStatusDetails;
 }

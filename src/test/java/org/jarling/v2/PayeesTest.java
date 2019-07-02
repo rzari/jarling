@@ -41,7 +41,12 @@ public class PayeesTest extends BaseTest {
             payeeCreation.setBusinessName("Paperclips Inc.");
             payeeCreation.setDateOfBirth(LocalDate.now());
 
-            PayeeAccountCreationRequest accountCreation = new PayeeAccountCreationRequest("First Account", "72170713", "608371", BankIdentifierType.SORT_CODE);
+            PayeeAccountCreationRequest accountCreation = new PayeeAccountCreationRequest(
+                "First Account",
+                "72170713",
+                "608371",
+                BankIdentifierType.SORT_CODE
+            );
             accountCreation.setDefaultAccount(true);
 
             payeeCreation.setAccounts(Collections.singletonList(accountCreation));

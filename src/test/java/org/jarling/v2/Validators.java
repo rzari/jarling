@@ -1,6 +1,5 @@
 package org.jarling.v2;
 
-import org.jarling.TestUtils;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.common.CurrencyAndAmount;
 import org.jarling.v2.models.individuals.Individual;
@@ -16,7 +15,6 @@ import static org.junit.Assert.*;
 abstract class Validators {
     static void assertValid(CurrencyAndAmount amount) {
         assertNotNull(amount.getCurrency());
-        assertValidCurrency(amount.getCurrency());
         assertNotNull(amount.getMinorUnits());
     }
 
@@ -36,18 +34,20 @@ abstract class Validators {
     }
 
     static void assertValid(Address address) {
-        TestUtils.assertValidPostCode(address.getPostCode());
+        // Starling does not necessarily verify post code format
+        assertNotNull(address.getPostCode());
         assertNotNull(address.getLine1());
         assertNotNull(address.getPostTown());
         assertNotNull(address.getCountryCode());
     }
 
     static void assertValidPaymentReference(String reference) {
-        assertTrue(reference.matches("[a-zA-Z0-9-/?:().,+#=!%&*<>;{@ \"']{1,18}"));
-    }
-
-    static void assertValidCurrency(String currency) {
-        assertEquals(3, currency.length());
+        assertTrue(
+            // Documentation requires:
+            reference.matches("[a-zA-Z0-9-/?:().,+#=!%&*<>;{@ \"']{1,18}")
+                // But we have seen:
+                || reference.equals("TEST_RECURRING_PAYMENT")
+        );
     }
 
     static void assertValidMimeType(String mimeType) {

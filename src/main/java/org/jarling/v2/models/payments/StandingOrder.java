@@ -1,7 +1,6 @@
 package org.jarling.v2.models.payments;
 
 import lombok.Data;
-import lombok.NonNull;
 import lombok.ToString;
 import org.jarling.v2.models.common.CurrencyAndAmount;
 
@@ -12,11 +11,12 @@ import java.util.UUID;
 @Data
 @ToString(onlyExplicitlyIncluded = true)
 public class StandingOrder {
-    @NonNull UUID paymentOrderUid;
-    @NonNull CurrencyAndAmount amount;
-    @NonNull String reference;
-    @NonNull UUID payeeUid;
-    @NonNull StandingOrderRecurrence standingOrderRecurrence;
-    LocalDate nextDate;
-    Instant cancelledAt;
+    private UUID paymentOrderUid;
+    private CurrencyAndAmount amount;
+    private String reference;
+    private UUID payeeUid;
+    private StandingOrderRecurrence standingOrderRecurrence;
+
+    private LocalDate nextDate;
+    private Instant cancelledAt;
 }

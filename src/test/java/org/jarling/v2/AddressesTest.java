@@ -1,5 +1,6 @@
 package org.jarling.v2;
 
+import com.neovisionaries.i18n.CountryCode;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 
+import static org.jarling.v2.Validators.assertValid;
 import static org.junit.Assert.assertEquals;
 
 public class AddressesTest extends BaseTest {
@@ -16,7 +18,7 @@ public class AddressesTest extends BaseTest {
         try {
             Addresses addresses = starling.getAddresses();
             final Address current = addresses.getCurrent();
-            Validators.assertValid(current);
+            assertValid(current);
             addresses.getPrevious().forEach(Validators::assertValid);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
@@ -26,7 +28,18 @@ public class AddressesTest extends BaseTest {
     @Test
     public void testUpdateAddress() {
         try {
-            AddressUpdateRequest addressUpdateRequest = new AddressUpdateRequest("1A Admiralty Arch", "The Mall", "City of Westminster", "London", "SW1A 2WH", "GB", "23748063", "923827402", LocalDate.now());
+            AddressUpdateRequest addressUpdateRequest = new AddressUpdateRequest(
+                "1A Admiralty Arch",
+                "The Mall",
+                "City of Westminster",
+                "London",
+                "SW1A 2WH",
+                CountryCode.GB,
+                "23748063",
+                "923827402",
+                LocalDate.now()
+            );
+
             starling.updateAddress(addressUpdateRequest);
             Addresses addresses = starling.getAddresses();
 

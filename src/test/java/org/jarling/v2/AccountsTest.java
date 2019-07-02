@@ -21,7 +21,7 @@ public class AccountsTest extends BaseTest {
             Account account = starling.getAccounts().get(0);
             assertNotNull(account.getAccountUid());
             assertNotNull(account.getDefaultCategory());
-            Validators.assertValidCurrency(account.getCurrency());
+            assertNotNull(account.getCurrency());
             assertTrue(account.getCreatedAt().isBefore(Instant.now()));
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
