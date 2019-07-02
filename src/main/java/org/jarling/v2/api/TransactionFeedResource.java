@@ -14,8 +14,6 @@ public interface TransactionFeedResource {
     /**
      * Changes the spending category for a transaction
      *
-     * Requires request signing
-     *
      * @param accountUid       Account uid (required)
      * @param categoryUid      Category uid (required)
      * @param feedItemUid      Feed item uid (required)
@@ -71,8 +69,6 @@ public interface TransactionFeedResource {
 
     /**
      * Changes the user-specified note attached to a transaction
-     *
-     * Requires request signing
      *
      * @param accountUid  Account uid (required)
      * @param categoryUid Category uid (required)

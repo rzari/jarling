@@ -82,6 +82,18 @@ public final class ApiService {
         return signedRequest.post(this.starlingBankEndpoint + url, body, queryParameters, requestHeaders);
     }
 
+    public HttpResponse post(String url) throws StarlingBankRequestException {
+        return post(url, null);
+    }
+
+    public HttpResponse post(String url, String body) throws StarlingBankRequestException {
+        return post(url, body, null, null);
+    }
+
+    public HttpResponse post(String url, String body, Map<String, String> queryParameters, Map<String, String> requestHeaders) throws StarlingBankRequestException {
+        return authenticatedRequest.post(this.starlingBankEndpoint + url, body, queryParameters, requestHeaders);
+    }
+
     public HttpResponse putSigned(String url) throws StarlingBankRequestException {
         return putSigned(url, null);
     }
@@ -97,6 +109,19 @@ public final class ApiService {
 
         return signedRequest.put(this.starlingBankEndpoint + url, body, queryParameters, requestHeaders);
     }
+
+    public HttpResponse put(String url) throws StarlingBankRequestException {
+        return put(url, null);
+    }
+
+    public HttpResponse put(String url, String body) throws StarlingBankRequestException {
+        return put(url, body, null, null);
+    }
+
+    public HttpResponse put(String url, String body, Map<String, String> queryParameters, Map<String, String> requestHeaders) throws StarlingBankRequestException {
+        return authenticatedRequest.put(this.starlingBankEndpoint + url, body, queryParameters, requestHeaders);
+    }
+
 
     public HttpResponse delete(String url) throws StarlingBankRequestException {
         return delete(url, null);

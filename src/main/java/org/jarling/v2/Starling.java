@@ -194,7 +194,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public void updateSpendingCategory(UUID accountUid, UUID categoryUid, UUID feedItemUid, SpendingCategory spendingCategory) throws StarlingBankRequestException {
-        apiService.putSigned(
+        apiService.put(
             "/feed/account/" + accountUid.toString()
                 + "/category/" + categoryUid.toString()
                 + "/" + feedItemUid.toString()
@@ -258,7 +258,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
 
     @Override
     public void updateUserNote(UUID accountUid, UUID categoryUid, UUID feedItemUid, String userNote) throws StarlingBankRequestException {
-        apiService.putSigned(
+        apiService.put(
             "/feed/account/" + accountUid.toString()
                 + "/category/" + categoryUid.toString()
                 + "/" + feedItemUid.toString()
@@ -285,7 +285,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
     public UUID createPayee(PayeeCreationRequest creationRequest) throws StarlingBankRequestException {
         return unwrapJsonMember(
             UUID.class,
-            apiService.putSigned("/payees", gson.toJson(creationRequest)).asString(),
+            apiService.put("/payees", gson.toJson(creationRequest)).asString(),
             "payeeUid"
         );
     }
@@ -294,7 +294,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
     public UUID createPayeeAccount(UUID payeeUid, PayeeAccountCreationRequest creationRequest) throws StarlingBankRequestException {
         return unwrapJsonMember(
             UUID.class,
-            apiService.putSigned("/payees/" + payeeUid + "/account", gson.toJson(creationRequest)).asString(),
+            apiService.put("/payees/" + payeeUid + "/account", gson.toJson(creationRequest)).asString(),
             "payeeAccountUid"
         );
     }
