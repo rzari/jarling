@@ -11,25 +11,16 @@ import java.util.UUID;
 public interface PayeesResource {
     /**
      * Get an account holder's payees
-     *
-     * @return List<Payee>
-     * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     List<Payee> getPayees() throws StarlingBankRequestException;
 
     /**
      * Create a payee
-     *
-     * @return the UUID of the new payee
-     * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     UUID createPayee(PayeeCreationRequest creationRequest) throws StarlingBankRequestException;
 
     /**
      * Create a payee account
-     *
-     * @return the UUID of the new payee account
-     * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     UUID createPayeeAccount(UUID payeeUid, PayeeAccountCreationRequest creationRequest) throws StarlingBankRequestException;
 }

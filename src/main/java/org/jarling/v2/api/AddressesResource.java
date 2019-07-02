@@ -8,9 +8,6 @@ public interface AddressesResource {
 
     /**
      * List the customer's addresses
-     *
-     * @return Addresses
-     * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     Addresses getAddresses() throws StarlingBankRequestException;
 
@@ -18,8 +15,6 @@ public interface AddressesResource {
      * Update the customer's current address
      *
      * Requires request signing
-     *
-     * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     void updateAddress(AddressUpdateRequest addressUpdateRequest) throws StarlingBankRequestException;
 }
