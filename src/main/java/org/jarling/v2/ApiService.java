@@ -134,4 +134,20 @@ public final class ApiService {
     public HttpResponse delete(String url, Map<String, String> queryParameters, Map<String, String> requestHeaders) throws StarlingBankRequestException {
         return authenticatedRequest.delete(this.starlingBankEndpoint + url, queryParameters, requestHeaders);
     }
+
+    public HttpResponse deleteSigned(String url) throws StarlingBankRequestException {
+        return deleteSigned(url, null);
+    }
+
+    public HttpResponse deleteSigned(String url, Map<String, String> queryParameters) throws StarlingBankRequestException {
+        return deleteSigned(url, queryParameters, null);
+    }
+
+    public HttpResponse deleteSigned(String url, Map<String, String> queryParameters, Map<String, String> requestHeaders) throws StarlingBankRequestException {
+        if (signedRequest == null) {
+            throw SignatureException.notConfiguredException();
+        }
+
+        return signedRequest.delete(this.starlingBankEndpoint + url, queryParameters, requestHeaders);
+    }
 }

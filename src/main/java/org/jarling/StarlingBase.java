@@ -3,7 +3,6 @@ package org.jarling;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import org.jarling.services.ApiService;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -41,7 +40,7 @@ public abstract class StarlingBase {
             public Instant read(JsonReader jsonReader) throws IOException {
                 return Instant.parse(jsonReader.nextString());
             }
-        })
+        }.nullSafe())
         .create();
     static final DateFormat transactionDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 

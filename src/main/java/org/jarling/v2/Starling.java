@@ -24,6 +24,7 @@ import org.jarling.v2.models.kyc.KycResult;
 import org.jarling.v2.models.payees.Payee;
 import org.jarling.v2.models.payees.PayeeAccountCreationRequest;
 import org.jarling.v2.models.payees.PayeeCreationRequest;
+import org.jarling.v2.models.payments.*;
 import org.jarling.v2.models.transactionfeed.FeedItem;
 import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
 import org.jarling.v2.models.transactionfeed.SpendingCategory;
@@ -31,10 +32,8 @@ import org.jarling.v2.models.transactionfeed.SpendingCategory;
 import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * API class responsible for creating services to access Starling Bank resources
@@ -296,6 +295,127 @@ public final class Starling extends StarlingBase implements StarlingBank {
             UUID.class,
             apiService.put("/payees/" + payeeUid + "/account", gson.toJson(creationRequest)).asString(),
             "payeeAccountUid"
+        );
+    }
+
+    @Override
+    public PaymentsResource payments() {
+        return this;
+    }
+
+    @Override
+    public PaymentOrder getPaymentOrder(UUID paymentOrderUid) throws StarlingBankRequestException {
+        return gson.fromJson(apiService.get("/payments/local/payment-order/" + paymentOrderUid).asString(), PaymentOrder.class);
+    }
+
+    @Override
+    public UUID createDomesticPayment(UUID accountUid, UUID categoryUid, InstructLocalPaymentRequest paymentRequest) throws StarlingBankRequestException {
+        return unwrapJsonMember(
+            UUID.class,
+            apiService.putSigned(
+                "/payments/local/account/" + accountUid
+                    + "/category/" + categoryUid,
+                gson.toJson(paymentRequest)
+            ).asString(),
+            "paymentOrderUid"
+        );
+    }
+
+    @Override
+    public StandingOrder getStandingOrder(UUID accountUid, UUID categoryUid, UUID standingOrderUid) throws StarlingBankRequestException {
+        return gson.fromJson(
+            apiService.get(
+                "/payments/local/account/" + accountUid
+                    + "/category/" + categoryUid
+                    + "/standing-orders/" + standingOrderUid
+            ).asString(),
+            StandingOrder.class
+        );
+    }
+
+    @Override
+    public UUID updateStandingOrder(UUID accountUid, UUID categoryUid, UUID standingOrderUid, UpdateStandingOrderRequest updateStandingOrderRequest) throws StarlingBankRequestException {
+        return unwrapJsonMember(
+            UUID.class,
+            apiService.putSigned(
+                "/payments/local/account/" + accountUid
+                    + "/category/" + categoryUid
+                    + "/standing-orders/" + standingOrderUid,
+                gson.toJson(updateStandingOrderRequest)
+            ).asString(),
+            "paymentOrderUid"
+        );
+
+    }
+
+    @Override
+    public void cancelStandingOrder(UUID accountUid, UUID categoryUid, UUID standingOrderUid) throws StarlingBankRequestException {
+        apiService.deleteSigned(
+            "/payments/local/account/" + accountUid
+                + "/category/" + categoryUid
+                + "/standing-orders/" + standingOrderUid
+        );
+    }
+
+    @Override
+    public List<StandingOrder> getStandingOrders(UUID accountUid, UUID categoryUid) throws StarlingBankRequestException {
+        return fromJsonList(
+            StandingOrder[].class,
+            apiService.get(
+                "/payments/local/account/" + accountUid
+                    + "/category/" + categoryUid
+                    + "/standing-orders"
+            ).asString(),
+            "standingOrders"
+        );
+    }
+
+    @Override
+    public UUID createStandingOrder(UUID accountUid, UUID categoryUid, CreateStandingOrderRequest standingOrderRequest) throws StarlingBankRequestException {
+        return unwrapJsonMember(
+            UUID.class,
+            apiService.putSigned(
+                "/payments/local/account/" + accountUid
+                    + "/category/" + categoryUid
+                    + "/standing-orders",
+                gson.toJson(standingOrderRequest)
+            ).asString(),
+            "paymentOrderUid"
+        );
+
+    }
+
+    @Override
+    public List<LocalDate> getUpcomingPayments(UUID accountUid, UUID categoryUid, UUID standingOrderUid) throws StarlingBankRequestException {
+        return getUpcomingPayments(accountUid, categoryUid, standingOrderUid, null);
+    }
+
+    @Override
+    public List<LocalDate> getUpcomingPayments(UUID accountUid, UUID categoryUid, UUID standingOrderUid, Integer count) throws StarlingBankRequestException {
+        return fromJsonList(
+            LocalDate[].class,
+            apiService.get(
+                "/payments/local/account/" + accountUid
+                    + "/category/" + categoryUid
+                    + "/standing-orders/" + standingOrderUid
+                    + "/upcoming-payments",
+                count != null
+                    ? Collections.singletonMap("count", count.toString())
+                    : null
+            ).asString(),
+            "nextPaymentDates"
+        );
+    }
+
+    @Override
+    public List<Payment> getPaymentsForPaymentOrder(UUID paymentOrderUid) throws StarlingBankRequestException {
+        return fromJsonList(
+            Payment[].class,
+            apiService.get(
+                "/payments/local/payment-order/" + paymentOrderUid
+                + "/payments"
+            ).asString(),
+            "payments"
         );
     }
 }
