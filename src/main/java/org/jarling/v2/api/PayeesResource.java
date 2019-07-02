@@ -20,6 +20,8 @@ public interface PayeesResource {
     /**
      * Create a payee
      *
+     * Requires request signing
+     *
      * @return the UUID of the new payee
      * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
@@ -27,6 +29,8 @@ public interface PayeesResource {
 
     /**
      * Create a payee account
+     *
+     * Requires request signing
      *
      * @return the UUID of the new payee account
      * @throws StarlingBankRequestException when there was an issue accessing the resource

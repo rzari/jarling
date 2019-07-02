@@ -17,6 +17,8 @@ public interface AddressesResource {
     /**
      * Update the customer's current address
      *
+     * Requires request signing
+     *
      * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     void updateAddress(AddressUpdateRequest addressUpdateRequest) throws StarlingBankRequestException;

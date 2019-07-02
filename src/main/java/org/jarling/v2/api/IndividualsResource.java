@@ -16,6 +16,8 @@ public interface IndividualsResource {
     /**
      * Update an individual account holder's email address
      *
+     * Requires request signing
+     *
      * @throws StarlingBankRequestException when there was an issue accessing the resource
      */
     void updateEmail(String email) throws StarlingBankRequestException;
