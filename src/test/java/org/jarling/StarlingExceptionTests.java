@@ -1,11 +1,9 @@
 package org.jarling;
 
 import com.google.gson.Gson;
-import org.jarling.StarlingBankApiVersion;
-import org.jarling.StarlingBankEnvironment;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.models.accounts.AccountBalance;
-import org.jarling.services.ApiService;
+import org.jarling.v2.ApiService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +30,7 @@ public class StarlingExceptionTests {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.goodApiService = new ApiService(StarlingBankApiVersion.V2, StarlingBankEnvironment.SANDBOX, properties.getProperty("starling.access.token"));
+        this.goodApiService = new ApiService(StarlingBankEnvironment.SANDBOX, properties.getProperty("starling.access.token"));
     }
 
     @Test
@@ -60,7 +58,7 @@ public class StarlingExceptionTests {
     @Test
     public void testStarlingUnauthorizedException(){
         try {
-            goodApiService = new ApiService(StarlingBankApiVersion.V2, StarlingBankEnvironment.SANDBOX, "lol");
+            goodApiService = new ApiService(StarlingBankEnvironment.SANDBOX, "lol");
             gson.fromJson(goodApiService.get("/accounts/balance").asString(), AccountBalance.class);
         } catch (StarlingBankRequestException e) {
             assertEquals(403, e.getStatusCode());

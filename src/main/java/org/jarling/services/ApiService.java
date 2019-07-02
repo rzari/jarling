@@ -1,6 +1,5 @@
 package org.jarling.services;
 
-import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.BasicHttpsClient;
@@ -22,13 +21,13 @@ public final class ApiService implements HttpClient{
 
     private final Map<String, String> defaultRequestHeaders = new HashMap<>();
     private final BasicHttpsClient request;
-    private final String STARLING_BANK_API_VERSION;
+    private final String API_BASE_PATH;
     private final String STARLING_BANK_ENDPOINT;
     private final String ACCESS_TOKEN;
 
-    public ApiService(StarlingBankApiVersion starlingApiVersion, StarlingBankEnvironment starlingBankEnvironment, String accessToken) {
-        this.STARLING_BANK_API_VERSION = starlingApiVersion.getPath();
-        this.STARLING_BANK_ENDPOINT = starlingBankEnvironment.getPath() + STARLING_BANK_API_VERSION;
+    public ApiService(StarlingBankEnvironment starlingBankEnvironment, String accessToken) {
+        this.API_BASE_PATH = "/api/v1";
+        this.STARLING_BANK_ENDPOINT = starlingBankEnvironment.getPath() + API_BASE_PATH;
         this.ACCESS_TOKEN = accessToken;
         setDefaultRequestHeaders();
         this.request = new BasicHttpsClient(getDefaultRequestHeaders());
@@ -40,7 +39,7 @@ public final class ApiService implements HttpClient{
     }
 
     private String removeApiVersionFromUrl(String url){
-        return url.replace(STARLING_BANK_API_VERSION, "");
+        return url.replace(API_BASE_PATH, "");
     }
 
     public String getLocationHeader(HttpResponse httpResponse){

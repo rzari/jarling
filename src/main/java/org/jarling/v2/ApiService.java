@@ -1,6 +1,5 @@
 package org.jarling.v2;
 
-import org.jarling.StarlingBankApiVersion;
 import org.jarling.StarlingBankEnvironment;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.HttpResponse;
@@ -21,13 +20,13 @@ import java.util.UUID;
  *
  */
 public final class ApiService {
-    private static final StarlingBankApiVersion API_VERSION = StarlingBankApiVersion.V2;
+    private static final String API_BASE_PATH = "/api/v2";
     private final BearerHttpsClient authenticatedRequest;
     private SignedHttpsClient signedRequest;
     private final String starlingBankEndpoint;
 
     public ApiService(StarlingBankEnvironment starlingBankEnvironment, String accessToken) {
-        this.starlingBankEndpoint = starlingBankEnvironment.getPath() + API_VERSION.getPath();
+        this.starlingBankEndpoint = starlingBankEnvironment.getPath() + API_BASE_PATH;
         this.authenticatedRequest = new BearerHttpsClient(accessToken);
     }
 

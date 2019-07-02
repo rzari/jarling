@@ -2,24 +2,10 @@ package org.jarling;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jarling.api.*;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.http.HttpParameter;
 import org.jarling.http.HttpResponse;
-import org.jarling.api.AccountResource;
-import org.jarling.api.AddressResource;
-import org.jarling.api.CardResource;
-import org.jarling.api.ContactResource;
-import org.jarling.api.CustomerResource;
-import org.jarling.api.DirectDebitMandateResource;
-import org.jarling.api.MerchantResource;
-import org.jarling.api.PaymentResource;
-import org.jarling.api.SavingsGoalResource;
-import org.jarling.api.TransactionDirectDebitResource;
-import org.jarling.api.TransactionFasterPaymentInResource;
-import org.jarling.api.TransactionFasterPaymentOutResource;
-import org.jarling.api.TransactionMasterCardResource;
-import org.jarling.api.TransactionResource;
-import org.jarling.api.WhoAmIResource;
 import org.jarling.models.accounts.Account;
 import org.jarling.models.accounts.AccountBalance;
 import org.jarling.models.budgeting.SavingsGoal;
@@ -64,7 +50,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
         if (accessToken == null || accessToken.equals("")) {
             throw new IllegalArgumentException("access token cannot be null or blank");
         } else {
-            apiService = new ApiService(StarlingBankApiVersion.V1, environment, accessToken);
+            apiService = new ApiService(environment, accessToken);
         }
     }
 
