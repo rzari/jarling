@@ -22,6 +22,11 @@ public interface TransactionFeedResource {
     List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Instant changesSince) throws StarlingBankRequestException;
 
     /**
+     * Gets the the customers feed items which were created between two timestamps
+     */
+    List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Instant minTransactionTimestamp, Instant maxTransactionTimestamp) throws StarlingBankRequestException;
+
+    /**
      * Fetches the list of items attached to a feed item
      */
     List<FeedItemAttachment> getFeedItemAttachments(UUID accountUid, UUID categoryUid, UUID feedItemUid) throws StarlingBankRequestException;

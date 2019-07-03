@@ -59,7 +59,7 @@ public class TransactionFeedTest extends BaseTest {
     }
 
     @Test
-    public void testGetFeedItems() {
+    public void testGetFeedItems_changesSince() {
         try {
             Account account = starling.getAccounts().get(0);
             UUID accountUid = account.getAccountUid();
@@ -69,13 +69,46 @@ public class TransactionFeedTest extends BaseTest {
 
             feedItems.forEach(item -> assertThat(item).isValid());
 
-            // Latest items come first
-            Instant dateSince = feedItems.get(0).getTransactionTime();
+            Instant dateSince = feedItems.get(feedItems.size() / 2 - 1).getTransactionTime();
 
             List<FeedItem> filteredFeedItems = starling.getFeedItems(accountUid, categoryUid, dateSince);
 
             assertThat(filteredFeedItems.stream()
                 .filter(item -> item.getUpdatedAt().isBefore(dateSince))
+            ).isEmpty();
+        } catch (StarlingBankRequestException se) {
+            failOnStarlingBankException(se);
+        }
+    }
+
+    @Test
+    public void testGetFeedItems_transactionsBetween() {
+        try {
+            Account account = starling.getAccounts().get(0);
+            UUID accountUid = account.getAccountUid();
+            UUID categoryUid = account.getDefaultCategory();
+
+            List<FeedItem> feedItems = starling.getFeedItems(
+                accountUid,
+                categoryUid,
+                getDefaultDate()
+            );
+
+            feedItems.forEach(item -> assertThat(item).isValid());
+
+            Instant dateSince = feedItems.get(feedItems.size() / 2 - 1).getTransactionTime();
+            Instant dateUntil = feedItems.get(0).getTransactionTime();
+
+            List<FeedItem> filteredFeedItems = starling.getFeedItems(accountUid, categoryUid, dateSince, dateUntil);
+
+            assertThat(
+                filteredFeedItems.stream()
+                    .filter(item -> item.getTransactionTime().isBefore(dateSince))
+            ).isEmpty();
+
+            assertThat(
+                filteredFeedItems.stream()
+                    .filter(item -> item.getTransactionTime().isAfter(dateUntil))
             ).isEmpty();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);

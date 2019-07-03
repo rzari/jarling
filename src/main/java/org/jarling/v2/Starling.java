@@ -233,6 +233,23 @@ public final class Starling extends StarlingBase implements StarlingBank {
     }
 
     @Override
+    public List<FeedItem> getFeedItems(UUID accountUid, UUID categoryUid, Instant minTransactionTimestamp, Instant maxTransactionTimestamp) throws StarlingBankRequestException {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("minTransactionTimestamp", minTransactionTimestamp.toString());
+        parameters.put("maxTransactionTimestamp", maxTransactionTimestamp.toString());
+        return fromJsonList(
+            FeedItem[].class,
+            apiService.get(
+                "/feed/account/" + accountUid.toString()
+                    + "/category/" + categoryUid.toString()
+                    + "/transactions-between",
+                parameters
+            ).asString(),
+            "feedItems"
+        );
+    }
+
+    @Override
     public List<FeedItemAttachment> getFeedItemAttachments(UUID accountUid, UUID categoryUid, UUID feedItemUid) throws StarlingBankRequestException {
         return fromJsonList(
             FeedItemAttachment[].class,
@@ -416,7 +433,7 @@ public final class Starling extends StarlingBase implements StarlingBank {
             Payment[].class,
             apiService.get(
                 "/payments/local/payment-order/" + paymentOrderUid
-                + "/payments"
+                    + "/payments"
             ).asString(),
             "payments"
         );
