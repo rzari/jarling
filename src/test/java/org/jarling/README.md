@@ -13,6 +13,11 @@ starling.access.token=<user access token>
 starling.signing.public-key-uid=<UID of the public key you are using, found in the Starling developer portal>
 starling.signing.private-key=<path to corresponding PKCS8 (a.k.a. DER) private key>
 starling.signing.key-algorithm=<RSA or ECDSA as appropriate>
+
+# To test the "create payment with new payee" endpoint, you need to
+# configure a valid, real, non-Starling UK bank account:
+user.bank.account-number=<account number>
+user.bank.sort-code=<sort code>
 ```
 
 ## Results

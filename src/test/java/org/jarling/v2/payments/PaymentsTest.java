@@ -1,9 +1,13 @@
-package org.jarling.v2;
+package org.jarling.v2.payments;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.CurrencyCode;
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.accounts.Account;
 import org.jarling.v2.models.common.CurrencyAndAmount;
+import org.jarling.v2.models.payees.BankIdentifierType;
+import org.jarling.v2.models.payees.PayeeType;
 import org.jarling.v2.models.payments.*;
 import org.junit.Test;
 
@@ -13,34 +17,77 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.jarling.v2.Validators.assertValid;
-import static org.jarling.v2.Validators.assertValidPaymentReference;
-import static org.junit.Assert.*;
-import static org.junit.Assume.assumeFalse;
+import static org.assertj.core.api.Assumptions.assumeThat;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class PaymentsTest extends BaseTest {
 
     @Test
     public void testCreateDomesticPaymentWithExistingPayee() {
         try {
-            UUID paymentUid = createPaymentOrder();
-            assertNotNull(paymentUid);
+            Account account = starling.getAccounts().get(0);
+            UUID accountUid = account.getAccountUid();
+            UUID categoryUid = account.getDefaultCategory();
+            UUID destinationAccountUid = starling
+                .getPayees().get(0)
+                .getAccounts().get(0)
+                .getPayeeAccountUid();
+
+            InstructLocalPaymentRequest paymentRequest = new InstructLocalPaymentRequest(
+                "Ref",
+                createCurrencyAndAmount(),
+                destinationAccountUid
+            );
+
+            UUID paymentUid = starling.createDomesticPayment(accountUid, categoryUid, paymentRequest);
+
+            assertThat(paymentUid).isNotNull();
+
+            PaymentOrder paymentOrder = starling.getPaymentOrder(paymentUid);
+            assertThat(paymentOrder).hasPaymentOrderUid(paymentUid);
+            assertThat(paymentOrder).isValid();
+            assertThat(paymentOrder).matches(paymentRequest);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
     }
 
     @Test
-    public void testGetPaymentOrder() {
+    public void testCreateDomesticPaymentWithNewPayee() {
         try {
-            UUID paymentOrderUid = createPaymentOrder();
-            PaymentOrder order = starling.getPaymentOrder(paymentOrderUid);
-            assertEquals(paymentOrderUid, order.getPaymentOrderUid());
-            assertValid(order.getAmount());
-            assertNotNull(order.getReference());
-            assertValidPaymentReference(order.getReference());
-            assertNotNull(order.getPayeeUid());
-            assertNotNull(order.getPayeeAccountUid());
+            assumeThat(externalAccountNumber)
+                .withFailMessage("Please configure an account number and sort code in sandbox.properties")
+                .isNotBlank();
+            assumeThat(externalAccountNumber)
+                .withFailMessage("Please configure an account number and sort code in sandbox.properties")
+                .isNotBlank();
+
+
+            Account account = starling.getAccounts().get(0);
+            UUID accountUid = account.getAccountUid();
+            UUID categoryUid = account.getDefaultCategory();
+            PaymentRecipient paymentRecipient = new PaymentRecipient(
+                "Franklin Shepard",
+                PayeeType.BUSINESS,
+                CountryCode.GB,
+                externalAccountNumber,
+                externalSortCode,
+                BankIdentifierType.SORT_CODE
+            );
+            InstructLocalPaymentRequest paymentRequest = new InstructLocalPaymentRequest(
+                "Ref",
+                createCurrencyAndAmount(),
+                paymentRecipient
+            );
+
+            UUID paymentUid = starling.createDomesticPayment(accountUid, categoryUid, paymentRequest);
+
+            assertThat(paymentUid).isNotNull();
+
+            PaymentOrder paymentOrder = starling.getPaymentOrder(paymentUid);
+            assertThat(paymentOrder).hasPaymentOrderUid(paymentUid);
+            assertThat(paymentOrder).isValid();
+            assertThat(paymentOrder).matches(paymentRequest);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -54,7 +101,7 @@ public class PaymentsTest extends BaseTest {
             UUID categoryUid = account.getDefaultCategory();
 
             UUID standingOrderUid = createStandingOrder(accountUid, categoryUid);
-            assertNotNull(standingOrderUid);
+            assertThat(standingOrderUid).isNotNull();
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }
@@ -70,8 +117,8 @@ public class PaymentsTest extends BaseTest {
 
             List<StandingOrder> standingOrders = starling.getStandingOrders(accountUid, categoryUid);
 
-            assumeFalse(standingOrders.isEmpty());
-            assertValid(standingOrders.get(0));
+            assumeThat(standingOrders.isEmpty()).isFalse();
+            standingOrders.forEach(order -> assertThat(order).isValid());
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }
@@ -86,12 +133,16 @@ public class PaymentsTest extends BaseTest {
 
             List<StandingOrder> standingOrders = starling.getStandingOrders(accountUid, categoryUid);
 
-            assumeFalse(standingOrders.isEmpty());
+            assumeThat(standingOrders).isNotEmpty();
 
-            StandingOrder standingOrder = starling.getStandingOrder(accountUid, categoryUid, standingOrders.get(0).getPaymentOrderUid());
+            StandingOrder standingOrder = starling.getStandingOrder(
+                accountUid,
+                categoryUid,
+                standingOrders.get(0).getPaymentOrderUid()
+            );
 
-            assertValid(standingOrder);
-            assertEquals(standingOrder, standingOrders.get(0));
+            assertThat(standingOrder).isValid();
+            assertThat(standingOrders.get(0)).isEqualTo(standingOrder);
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }
@@ -105,7 +156,7 @@ public class PaymentsTest extends BaseTest {
             UUID categoryUid = account.getDefaultCategory();
 
             List<StandingOrder> standingOrders = starling.getStandingOrders(accountUid, categoryUid);
-            assumeFalse(standingOrders.isEmpty());
+            assumeThat(standingOrders).isNotEmpty();
             StandingOrder standingOrder = standingOrders.get(0);
 
 
@@ -118,8 +169,17 @@ public class PaymentsTest extends BaseTest {
 
             UUID standingOrderUid = starling.updateStandingOrder(accountUid, categoryUid, standingOrder.getPaymentOrderUid(), request);
 
-            assertNotNull(standingOrderUid);
-            assertNotEquals(standingOrder.getPaymentOrderUid(), standingOrderUid);
+            assertThat(standingOrderUid)
+                .isNotNull()
+                .isNotEqualTo(standingOrder.getPaymentOrderUid());
+
+            StandingOrder updatedStandingOrder = starling.getStandingOrder(
+                accountUid,
+                categoryUid,
+                standingOrderUid
+            );
+
+            assertThat(updatedStandingOrder).matches(request);
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }
@@ -133,10 +193,14 @@ public class PaymentsTest extends BaseTest {
             UUID categoryUid = account.getDefaultCategory();
 
             List<StandingOrder> standingOrders = starling.getStandingOrders(accountUid, categoryUid);
-            assumeFalse(standingOrders.isEmpty());
+            assumeThat(standingOrders).isNotEmpty();
             StandingOrder standingOrder = standingOrders.get(0);
 
             starling.cancelStandingOrder(accountUid, categoryUid, standingOrder.getPaymentOrderUid());
+
+            StandingOrder cancelledStandingOrder = starling.getStandingOrder(accountUid, categoryUid, standingOrder.getPaymentOrderUid());
+
+            assertThat(cancelledStandingOrder).isCancelled();
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }
@@ -153,13 +217,13 @@ public class PaymentsTest extends BaseTest {
                 .stream()
                 .filter(s -> s.getCancelledAt() == null)
                 .collect(Collectors.toList());
-            assumeFalse(standingOrders.isEmpty());
+            assumeThat(standingOrders).isNotEmpty();
             StandingOrder standingOrder = standingOrders.get(0);
 
             List<LocalDate> upcomingPayments = starling.getUpcomingPayments(accountUid, categoryUid, standingOrder.getPaymentOrderUid());
-            assertFalse(upcomingPayments.isEmpty());
+            assumeThat(upcomingPayments).isNotEmpty();
             upcomingPayments.forEach(
-                date -> assertFalse(date.isBefore(LocalDate.now()))
+                date -> assertThat(date).isAfterOrEqualTo(LocalDate.now())
             );
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
@@ -171,16 +235,8 @@ public class PaymentsTest extends BaseTest {
         try {
             UUID paymentUid = createPaymentOrder();
             List<Payment> payments = starling.getPaymentsForPaymentOrder(paymentUid);
-            assertFalse(payments.isEmpty());
-            Payment payment = payments.get(0);
-            assertNotNull(payment.getPaymentUid());
-            assertNotNull(payment.getAmount());
-            assertValid(payment.getAmount());
-            assertNotNull(payment.getReference());
-            assertValidPaymentReference(payment.getReference());
-            assertNotNull(payment.getPayeeUid());
-            assertNotNull(payment.getPayeeAccountUid());
-            assertNotNull(payment.getCreatedAt());
+            assertThat(payments).isNotEmpty();
+            payments.forEach(payment -> assertThat(payment).isValid());
         } catch (StarlingBankRequestException e) {
             failOnStarlingBankException(e);
         }

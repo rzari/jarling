@@ -1,19 +1,18 @@
-package org.jarling.v2;
+package org.jarling.v2.accountholder;
 
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.accountholder.AccountHolder;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class AccountHolderTest extends BaseTest {
     @Test
     public void testAccountHolder() {
         try {
             AccountHolder accountHolder = starling.getAccountHolder();
-            assertNotNull(accountHolder.getAccountHolderUid());
-            assertNotNull(accountHolder.getAccountHolderType());
+            assertThat(accountHolder).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -23,7 +22,7 @@ public class AccountHolderTest extends BaseTest {
     public void testAccountHolderName() {
         try {
             String name = starling.getAccountHolderName();
-            assertFalse(name.isEmpty());
+            assertThat(name).isNotEmpty();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

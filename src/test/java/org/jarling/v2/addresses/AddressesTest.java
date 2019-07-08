@@ -1,25 +1,23 @@
-package org.jarling.v2;
+package org.jarling.v2.addresses;
 
 import com.neovisionaries.i18n.CountryCode;
 import org.jarling.exceptions.StarlingBankRequestException;
-import org.jarling.v2.models.addresses.Address;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.addresses.AddressUpdateRequest;
 import org.jarling.v2.models.addresses.Addresses;
 import org.junit.Test;
 
 import java.time.LocalDate;
 
-import static org.jarling.v2.Validators.assertValid;
-import static org.junit.Assert.assertEquals;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class AddressesTest extends BaseTest {
     @Test
     public void testGetAddresses() {
         try {
             Addresses addresses = starling.getAddresses();
-            final Address current = addresses.getCurrent();
-            assertValid(current);
-            addresses.getPrevious().forEach(Validators::assertValid);
+            assertThat(addresses.getCurrent()).isValid();
+            addresses.getPrevious().forEach(a -> assertThat(a).isValid());
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -42,13 +40,7 @@ public class AddressesTest extends BaseTest {
 
             starling.updateAddress(addressUpdateRequest);
             Addresses addresses = starling.getAddresses();
-
-            assertEquals(addresses.getCurrent().getLine1(), addressUpdateRequest.getLine1());
-            assertEquals(addresses.getCurrent().getLine2(), addressUpdateRequest.getLine2());
-            assertEquals(addresses.getCurrent().getLine3(), addressUpdateRequest.getLine3());
-            assertEquals(addresses.getCurrent().getPostTown(), addressUpdateRequest.getPostTown());
-            assertEquals(addresses.getCurrent().getPostCode(), addressUpdateRequest.getPostCode());
-            assertEquals(addresses.getCurrent().getCountryCode(), addressUpdateRequest.getCountryCode());
+            assertThat(addresses.getCurrent()).matches(addressUpdateRequest);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

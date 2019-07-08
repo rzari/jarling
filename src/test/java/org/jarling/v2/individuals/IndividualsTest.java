@@ -1,18 +1,18 @@
-package org.jarling.v2;
+package org.jarling.v2.individuals;
 
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.individuals.Individual;
 import org.junit.Test;
 
-import static org.jarling.v2.Validators.assertValid;
-import static org.junit.Assert.assertEquals;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class IndividualsTest extends BaseTest {
     @Test
     public void testIndividual() {
         try {
             Individual individual = starling.getIndividual();
-            assertValid(individual);
+            assertThat(individual).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -24,7 +24,7 @@ public class IndividualsTest extends BaseTest {
             String email = "test@example.com";
             starling.updateEmail(email);
             Individual individual = starling.getIndividual();
-            assertEquals(individual.getEmail(), email);
+            assertThat(individual).hasEmail(email);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

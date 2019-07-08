@@ -1,6 +1,7 @@
-package org.jarling.v2;
+package org.jarling.v2.accounts;
 
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.accounts.Account;
 import org.jarling.v2.models.accounts.AccountIdentifiers;
 import org.jarling.v2.models.accounts.Balance;
@@ -8,21 +9,17 @@ import org.jarling.v2.models.accounts.ConfirmationOfFunds;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.time.Instant;
 import java.util.UUID;
 
-import static org.jarling.TestUtils.*;
-import static org.junit.Assert.*;
+import static org.jarling.v2.JarlingAssertions.assertThat;
+
 
 public class AccountsTest extends BaseTest {
     @Test
     public void testAccounts() {
         try {
             Account account = starling.getAccounts().get(0);
-            assertNotNull(account.getAccountUid());
-            assertNotNull(account.getDefaultCategory());
-            assertNotNull(account.getCurrency());
-            assertTrue(account.getCreatedAt().isBefore(Instant.now()));
+            assertThat(account).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -33,10 +30,7 @@ public class AccountsTest extends BaseTest {
         try {
             UUID accountUid = starling.getAccounts().get(0).getAccountUid();
             AccountIdentifiers accountIdentifiers = starling.getAccountIdentifiers(accountUid);
-            assertValidAccountNumber(accountIdentifiers.getAccountIdentifier());
-            assertValidSortCode(accountIdentifiers.getBankIdentifier());
-            assertValidBic(accountIdentifiers.getBic());
-            assertValidIban(accountIdentifiers.getIban());
+            assertThat(accountIdentifiers).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -47,15 +41,7 @@ public class AccountsTest extends BaseTest {
         try {
             UUID accountUid = starling.getAccounts().get(0).getAccountUid();
             Balance balance = starling.getAccountBalance(accountUid);
-
-            Validators.assertValid(balance.getClearedBalance());
-            Validators.assertValid(balance.getEffectiveBalance());
-            Validators.assertValid(balance.getPendingTransactions());
-            Validators.assertValid(balance.getAvailableToSpend());
-            Validators.assertValid(balance.getAcceptedOverdraft());
-            Validators.assertValid(balance.getAmount());
-
-            assertTrue(balance.getAmount().getMinorUnits().compareTo(BigInteger.ZERO) >= 0);
+            assertThat(balance).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -68,10 +54,10 @@ public class AccountsTest extends BaseTest {
             Balance balance = starling.getAccountBalance(accountUid);
 
             ConfirmationOfFunds funds = starling.getConfirmationOfFunds(accountUid, balance.getAvailableToSpend().getMinorUnits());
-            assertTrue(funds.isRequestedAmountAvailableToSpend());
+            assertThat(funds).isAmountRequestedAvailableToSpend();
 
             funds = starling.getConfirmationOfFunds(accountUid, balance.getAvailableToSpend().getMinorUnits().add(BigInteger.ONE));
-            assertFalse(funds.isRequestedAmountAvailableToSpend());
+            assertThat(funds).isAmountRequestedNotAvailableToSpend();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

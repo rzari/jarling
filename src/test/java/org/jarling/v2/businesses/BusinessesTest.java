@@ -1,23 +1,19 @@
-package org.jarling.v2;
+package org.jarling.v2.businesses;
 
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.addresses.Address;
 import org.jarling.v2.models.businesses.Business;
 import org.junit.Test;
 
-import static org.jarling.TestUtils.assertValidEmail;
-import static org.jarling.v2.Validators.assertValid;
-import static org.junit.Assert.assertFalse;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class BusinessesTest extends BaseTest {
     @Test
     public void testBusiness() {
         try {
             Business business = starling.getBusiness();
-
-            assertFalse(business.getCompanyName().isEmpty());
-            assertFalse(business.getCompanyRegistrationNumber().isEmpty());
-            assertValidEmail(business.getEmail());
+            assertThat(business).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -27,7 +23,7 @@ public class BusinessesTest extends BaseTest {
     public void testRegisteredAddress() {
         try {
             Address address = starling.getRegisteredAddress();
-            assertValid(address);
+            assertThat(address).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -37,7 +33,7 @@ public class BusinessesTest extends BaseTest {
     public void testCorrespondenceAddress() {
         try {
             Address address = starling.getCorrespondenceAddress();
-            assertValid(address);
+            assertThat(address).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

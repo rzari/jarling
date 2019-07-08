@@ -4,6 +4,8 @@ import org.jarling.StarlingBankEnvironment;
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.v2.http.CertificateType;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,11 +18,14 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Properties;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
 
+@RunWith(JUnit4.class)
 public abstract class BaseTest {
     protected StarlingBank starling;
+    protected String externalAccountNumber;
+    protected String externalSortCode;
 
     @Before
     public void setUp() {
@@ -32,6 +37,9 @@ public abstract class BaseTest {
         }
 
         this.starling = new Starling(StarlingBankEnvironment.SANDBOX, properties.getProperty("starling.access.token"));
+
+        externalAccountNumber = properties.getProperty("user.bank.account-number");
+        externalSortCode = properties.getProperty("user.bank.account-number");
 
         try {
             // Should be in PKCS8 (DER) format
@@ -50,9 +58,10 @@ public abstract class BaseTest {
     }
 
     public void failOnStarlingBankException(StarlingBankRequestException se) {
-        assumeFalse(se.getReason().equals("{\"errors\":[{\"message\":\"endpoint called with non-business account\"}],\"success\":false}\n"));
-        assumeFalse(se.getReason().equals("{\"errors\":[{\"message\":\"endpoint called with non-joint account\"}],\"success\":false}\n"));
-        assumeFalse(se.getReason().contains("\"error\":\"insufficient_scope\""));
+        assumeThat(se.getReason()).isNotEqualTo("{\"errors\":[{\"message\":\"endpoint called with non-business account\"}],\"success\":false}\n");
+        assumeThat(se.getReason()).isNotEqualTo("{\"errors\":[{\"message\":\"endpoint called with non-joint account\"}],\"success\":false}\n");
+        assumeThat(se.getReason()).doesNotContain("\"error\":\"insufficient_scope\"");
+
         fail("StarlingBankRequestException: " + se.getReason() + ":" + se.getErrorDescription());
     }
 

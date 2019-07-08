@@ -1,18 +1,19 @@
-package org.jarling.v2;
+package org.jarling.v2.apiuseridentity;
 
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.apiuseridentity.Identity;
 import org.jarling.v2.models.individuals.Individual;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class ApiUserIdentityTest extends BaseTest {
     @Test
     public void testAuthorisingIndividual() {
         try {
             Individual individual = starling.getAuthorisingIndividual();
-            Validators.assertValid(individual);
+            assertThat(individual).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -22,7 +23,7 @@ public class ApiUserIdentityTest extends BaseTest {
     public void testIdentity() {
         try {
             Identity identity = starling.getTokenIdentity();
-            assertNotNull(identity.getCustomerUid());
+            assertThat(identity).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

@@ -1,7 +1,8 @@
-package org.jarling.v2;
+package org.jarling.v2.transactionfeed;
 
 import org.jarling.exceptions.StarlingBankRequestException;
 import org.jarling.models.transactions.FeedItemAttachmentData;
+import org.jarling.v2.BaseTest;
 import org.jarling.v2.models.accounts.Account;
 import org.jarling.v2.models.transactionfeed.FeedItem;
 import org.jarling.v2.models.transactionfeed.FeedItemAttachment;
@@ -9,14 +10,13 @@ import org.jarling.v2.models.transactionfeed.SpendingCategory;
 import org.junit.Test;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.jarling.v2.Validators.assertValidMimeType;
-import static org.junit.Assert.*;
-import static org.junit.Assume.assumeFalse;
+import static org.assertj.core.api.Assumptions.assumeThat;
+import static org.jarling.v2.JarlingAssertions.assertThat;
 
 public class TransactionFeedTest extends BaseTest {
     @Test
@@ -36,7 +36,7 @@ public class TransactionFeedTest extends BaseTest {
 
             FeedItem updatedFeedItem = starling.getFeedItem(accountUid, categoryUid, feedItem.getFeedItemUid());
 
-            assertEquals(newSpendingCategory, updatedFeedItem.getSpendingCategory());
+            assertThat(updatedFeedItem.getSpendingCategory()).isEqualTo(newSpendingCategory);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -52,7 +52,7 @@ public class TransactionFeedTest extends BaseTest {
 
             FeedItem feedItem = starling.getFeedItem(accountUid, categoryUid, feedItems.get(0).getFeedItemUid());
 
-            assertFeedItemValid(feedItem);
+            assertThat(feedItem).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -67,18 +67,16 @@ public class TransactionFeedTest extends BaseTest {
 
             List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, getDefaultDate());
 
-            assertFeedItemValid(feedItems.get(0));
+            feedItems.forEach(item -> assertThat(item).isValid());
 
+            // Latest items come first
             Instant dateSince = feedItems.get(0).getTransactionTime();
 
             List<FeedItem> filteredFeedItems = starling.getFeedItems(accountUid, categoryUid, dateSince);
 
-            assertEquals(
-                0,
-                filteredFeedItems.stream()
-                    .filter(item -> item.getUpdatedAt().isBefore(dateSince))
-                    .count()
-            );
+            assertThat(filteredFeedItems.stream()
+                .filter(item -> item.getUpdatedAt().isBefore(dateSince))
+            ).isEmpty();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -94,11 +92,7 @@ public class TransactionFeedTest extends BaseTest {
 
             List<FeedItemAttachment> attachments = starling.getFeedItemAttachments(accountUid, categoryUid, feedItem.getFeedItemUid());
 
-            attachments.forEach(attachment -> {
-                assertNotNull(attachment.getFeedItemAttachmentUid());
-                assertNotNull(attachment.getFeedItemUid());
-                assertValidMimeType(attachment.getAttachmentType());
-            });
+            attachments.forEach(attachment -> assertThat(attachment).isValid());
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -112,24 +106,28 @@ public class TransactionFeedTest extends BaseTest {
             UUID categoryUid = account.getDefaultCategory();
             List<FeedItem> feedItems = starling.getFeedItems(accountUid, categoryUid, getDefaultDate());
             List<FeedItemAttachment> attachments = feedItems.stream()
-                .map(feedItem -> {
+                .flatMap(feedItem -> {
                     try {
-                        return starling.getFeedItemAttachments(accountUid, categoryUid, feedItem.getFeedItemUid());
+                        return starling.getFeedItemAttachments(
+                            accountUid,
+                            categoryUid,
+                            feedItem.getFeedItemUid()
+                        ).stream();
                     } catch (StarlingBankRequestException e) {
                         e.printStackTrace();
-                        return Collections.<FeedItemAttachment>emptyList();
+                        return Stream.empty();
                     }
                 })
-                .flatMap(List::stream)
                 .collect(Collectors.toList());
-            assumeFalse(attachments.isEmpty());
+            assumeThat(attachments).isNotEmpty();
 
             FeedItemAttachment attachment = attachments.get(0);
 
             FeedItemAttachmentData data = starling.getFeedItemAttachment(accountUid, categoryUid, attachment.getFeedItemUid(), attachment.getFeedItemAttachmentUid());
 
-            assertEquals(attachment.getAttachmentType(), data.getContentType());
-            assertNotEquals(0, data.getData().length);
+            assertThat(data)
+                .isValid()
+                .hasContentType(attachment.getAttachmentType());
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
@@ -150,27 +148,10 @@ public class TransactionFeedTest extends BaseTest {
 
             FeedItem updatedFeedItem = starling.getFeedItem(accountUid, categoryUid, feedItem.getFeedItemUid());
 
-            assertEquals(newUserNote, updatedFeedItem.getUserNote());
+            assertThat(updatedFeedItem.getUserNote()).isEqualTo(newUserNote);
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }
-    }
-
-    private static void assertFeedItemValid(FeedItem feedItem) {
-        assertNotNull(feedItem.getFeedItemUid());
-        assertNotNull(feedItem.getCategoryUid());
-        assertNotNull(feedItem.getAmount());
-        assertNotNull(feedItem.getSourceAmount());
-        assertNotNull(feedItem.getDirection());
-        assertNotNull(feedItem.getUpdatedAt());
-        assertNotNull(feedItem.getTransactionTime());
-        assertNotNull(feedItem.getSettlementTime());
-        assertNotNull(feedItem.getSource());
-        assertNotNull(feedItem.getCounterPartyType());
-        assertFalse(feedItem.getCounterPartyName().isEmpty());
-        assertFalse(feedItem.getReference().isEmpty());
-        assertNotNull(feedItem.getCountry());
-        assertNotNull(feedItem.getSpendingCategory());
     }
 
     private static Instant getDefaultDate() {
