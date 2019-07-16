@@ -1,9 +1,7 @@
 package org.jarling.v2.models.common;
 
 import com.neovisionaries.i18n.CurrencyCode;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigInteger;
 
@@ -12,7 +10,9 @@ import java.math.BigInteger;
  */
 @Data
 @ToString(onlyExplicitlyIncluded = true)
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class CurrencyAndAmount {
-    private @NonNull CurrencyCode currency;
-    private @NonNull BigInteger minorUnits;
+    private @NonNull CurrencyCode currency = CurrencyCode.UNDEFINED;
+    private @NonNull BigInteger minorUnits = BigInteger.ZERO;
 }
