@@ -52,6 +52,26 @@ public class PaymentsTest extends BaseTest {
         }
     }
 
+    @Test(expected = StarlingBankRequestException.class)
+    public void testCreateDomesticPaymentWithInsufficientFunds() throws StarlingBankRequestException {
+        Account account = starling.getAccounts().get(0);
+        CurrencyAndAmount currencyAndAmount =
+                starling.getAccountBalance(account.getAccountUid()).getAvailableToSpend();
+        UUID accountUid = account.getAccountUid();
+        UUID categoryUid = account.getDefaultCategory();
+        UUID destinationAccountUid = starling
+                .getPayees().get(0)
+                .getAccounts().get(0)
+                .getPayeeAccountUid();
+
+        InstructLocalPaymentRequest paymentRequest = new InstructLocalPaymentRequest(
+                "Ref",
+                new CurrencyAndAmount(CurrencyCode.GBP, currencyAndAmount.getMinorUnits().add(BigInteger.ONE)),
+                destinationAccountUid
+        );
+        starling.createDomesticPayment(accountUid, categoryUid, paymentRequest);
+    }
+
     @Test
     public void testCreateDomesticPaymentWithNewPayee() {
         try {
