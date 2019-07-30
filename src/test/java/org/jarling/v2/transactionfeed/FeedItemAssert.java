@@ -21,7 +21,6 @@ public class FeedItemAssert extends AbstractAssert<FeedItemAssert, FeedItem> {
         assertThat(actual.getDirection()).isNotNull();
         assertThat(actual.getUpdatedAt()).isNotNull();
         assertThat(actual.getTransactionTime()).isNotNull();
-        assertThat(actual.getSettlementTime()).isNotNull();
         assertThat(actual.getSource()).isNotNull();
         assertThat(actual.getCounterPartyType()).isNotNull();
         assertThat(actual.getCounterPartyName()).isNotEmpty();

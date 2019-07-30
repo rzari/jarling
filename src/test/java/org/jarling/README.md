@@ -36,7 +36,7 @@ openssl genrsa -out private_key.pem 2048
 openssl genrsa -out key_rotation_private_key.pem 2048
 openssl rsa -in private_key.pem -outform PEM -pubout -out public_key.pem
 openssl rsa -in key_rotation_private_key.pem -outform PEM -pubout -out key_rotation_public_key.pem
-openssl rsa -inform PEM -outform DER -text -in private_key.pem -out private_key.der
+openssl pkcs8 -in private_key.pem -topk8 -nocrypt -out private_key.der -outform der
 ```
 
 1. Store the resulting files somewhere very safe. In particular **do not lose** `key_rotation_private_key.pem` or you will have to throw away your Starling application registration and start again. The same applies if it falls into the wrong hands.
