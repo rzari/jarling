@@ -12,13 +12,6 @@ import java.security.PrivateKey;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- *
- * Service to manage the API requests to Starling Bank API Endpoints
- *
- * @author Nav Roudsari (nav@rzari.co.uk)
- *
- */
 public final class ApiService {
     private static final String API_BASE_PATH = "/api/v2";
     private final BearerHttpsClient authenticatedRequest;

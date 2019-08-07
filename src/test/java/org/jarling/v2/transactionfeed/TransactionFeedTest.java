@@ -158,9 +158,7 @@ public class TransactionFeedTest extends BaseTest {
 
             FeedItemAttachmentData data = starling.getFeedItemAttachment(accountUid, categoryUid, attachment.getFeedItemUid(), attachment.getFeedItemAttachmentUid());
 
-            assertThat(data)
-                .isValid()
-                .hasContentType(attachment.getAttachmentType());
+            assertThat(data).isValid();
         } catch (StarlingBankRequestException se) {
             failOnStarlingBankException(se);
         }

@@ -3,47 +3,40 @@ package org.jarling.http;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.jarling.exceptions.StarlingBankRequestException;
+import org.jarling.util.StreamUtils;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Nav Roudsari (nav@rzari.co.uk)
- *
  */
 public class HttpResponse {
 
-    private final HttpsURLConnection httpsURLConnection;
     private int statusCode;
     private InputStream is;
     private URL request;
-    private Long expiration;
-    private Long lastModified;
     private Map<String, List<String>> responseHeaders;
     private String contentType;
-    private String contentEncoding;
 
     public HttpResponse(HttpsURLConnection httpsURLConnection) throws StarlingBankRequestException {
-        this.httpsURLConnection = httpsURLConnection;
         try {
-            if (httpsURLConnection.getResponseCode() < HttpsURLConnection.HTTP_BAD_REQUEST){
+            if (httpsURLConnection.getResponseCode() < HttpsURLConnection.HTTP_BAD_REQUEST) {
                 this.is = httpsURLConnection.getInputStream();
-            }else {
+            } else {
                 this.is = httpsURLConnection.getErrorStream();
                 processStatusCode(httpsURLConnection);
             }
             this.statusCode = httpsURLConnection.getResponseCode();
-            this.expiration = httpsURLConnection.getExpiration();
             this.request = httpsURLConnection.getURL();
-            this.expiration = httpsURLConnection.getExpiration();
-            this.lastModified = httpsURLConnection.getLastModified();
             this.responseHeaders = httpsURLConnection.getHeaderFields();
             this.contentType = httpsURLConnection.getContentType();
-            this.contentEncoding = httpsURLConnection.getContentEncoding();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,19 +44,19 @@ public class HttpResponse {
 
     private void processStatusCode(HttpsURLConnection httpsURLConnection) throws StarlingBankRequestException {
         try {
-            switch (httpsURLConnection.getResponseCode()){
+            switch (httpsURLConnection.getResponseCode()) {
                 case 400:
-                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), toString(this.is), "Bad Request", "Something was wrong with the request made, check the request to address the error included in the response");
+                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), this.asString(), "Bad Request", "Something was wrong with the request made, check the request to address the error included in the response");
                 case 401:
-                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), toString(this.is), "Unauthorized", "You are not authorised to access the requested data");
+                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), this.asString(), "Unauthorized", "You are not authorised to access the requested data");
                 case 403:
-                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), toString(this.is), "Forbidden", "Your authentication failed, usually due to the access token being expired or an attempt to access a resource beyond the scope of the token");
+                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), this.asString(), "Forbidden", "Your authentication failed, usually due to the access token being expired or an attempt to access a resource beyond the scope of the token");
                 case 404:
-                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), toString(this.is), "Not Found", "The requested resource does not exist");
+                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), this.asString(), "Not Found", "The requested resource does not exist");
                 case 500:
-                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), toString(this.is), "Internal Server Error", "Something went wrong on our side - get in touch so we can look into it!");
+                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), this.asString(), "Internal Server Error", "Something went wrong on our side - get in touch so we can look into it!");
                 default:
-                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), toString(this.is), "Unknown Error", "Looks like something might be wrong jarling");
+                    throw new StarlingBankRequestException(httpsURLConnection.getResponseCode(), this.asString(), "Unknown Error", "Looks like something might be wrong jarling");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,78 +71,39 @@ public class HttpResponse {
         return this.statusCode;
     }
 
-    public long getExpiration() {
-        return this.expiration;
-    }
-
-    public long getLastModified() {
-        return this.lastModified;
-    }
-
     public String getContentType() {
         return this.contentType;
-    }
-
-    public String getResponseHeader(String name) {
-        return this.httpsURLConnection.getHeaderField(name);
-    }
-
-    public InputStream getInputStream() {
-        return this.is;
     }
 
     public JsonObject asJsonObject() {
         JsonObject json = null;
         if (this.contentType.equals("application/json")) {
             JsonParser jsonParser = new JsonParser();
-            try {
-                json = (JsonObject) jsonParser.parse(new InputStreamReader(this.is, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            json = (JsonObject) jsonParser.parse(new InputStreamReader(this.is, StandardCharsets.UTF_8));
         }
         return json;
     }
 
-    private String toString(InputStream is){
-        final StringBuilder stringBuilder = new StringBuilder();
-        String responseString;
-        if (this.is != null){
-            BufferedReader reader;
-            try {
-                reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                while (null != (responseString = reader.readLine())){
-                    stringBuilder.append(responseString).append('\n');
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+    public String asString() {
+        if (this.is == null) {
+            return "";
         }
-        return stringBuilder.toString();
-    }
 
-    public String asString(){
-        return toString(this.is);
+        try {
+            return StreamUtils.toString(this.is);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public byte[] asBytes() {
         try {
-            byte[] targetArray = new byte[this.is.available()];
-            this.is.read(targetArray);
-            return targetArray;
+            return StreamUtils.toByteArray(this.is);
         } catch (IOException e) {
             e.printStackTrace();
             return new byte[0];
         }
-    }
-
-    public void disconnect() {
-        this.httpsURLConnection.disconnect();
-    }
-
-    public String getContentEncoding() {
-        return this.contentEncoding;
     }
 
     public Map<String, List<String>> getHeaders() {
