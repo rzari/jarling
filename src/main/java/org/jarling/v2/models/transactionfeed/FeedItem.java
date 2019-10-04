@@ -35,4 +35,5 @@ public class FeedItem {
     private CountryCode country;
     private SpendingCategory spendingCategory;
     private String userNote;
+    private Status status;
 }
