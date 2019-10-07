@@ -48,6 +48,7 @@ public class BasicHttpsClient implements HttpClient{
             setRequestHeaders(httpsURLConnection, this.getDefaultRequestHeaders());
             setRequestHeaders(httpsURLConnection, httpRequest.getRequestHeaders());
             if (httpRequest.getBody() != null){
+                this.requestHeaders.put("Accept", "application/json");
                 this.requestHeaders.put("Content-Type", "application/json; charset=utf-8");
                 setRequestHeaders(httpsURLConnection, this.getDefaultRequestHeaders());
                 httpsURLConnection.setDoOutput(true);
